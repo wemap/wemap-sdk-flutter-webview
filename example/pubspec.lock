@@ -81,6 +81,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  maplibre_gl_platform_interface:
+    dependency: transitive
+    description:
+      path: maplibre_gl_platform_interface
+      ref: main
+      resolved-ref: "7e6b575001b5d9ab5a976cd8753501db415502e2"
+      url: "https://github.com/m0nac0/flutter-maplibre-gl.git"
+    source: git
+    version: "0.16.0"
   matcher:
     dependency: transitive
     description:
@@ -172,4 +181,4 @@ packages:
     version: "2.1.2"
 sdks:
   dart: ">=2.18.5 <3.0.0"
-  flutter: ">=2.5.0"
+  flutter: ">=2.10.0"

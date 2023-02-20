@@ -1,0 +1,34 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_wemap_sdk (0.0.1):
+    - Flutter
+    - livemap-ios-sdk
+  - livemap-ios-sdk (2.2.2)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_wemap_sdk (from `.symlinks/plugins/flutter_wemap_sdk/ios`)
+  - "livemap-ios-sdk (from `git@github.com:wemap/livemap-ios-sdk.git`, branch `master`)"
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_wemap_sdk:
+    :path: ".symlinks/plugins/flutter_wemap_sdk/ios"
+  livemap-ios-sdk:
+    :branch: master
+    :git: "git@github.com:wemap/livemap-ios-sdk.git"
+
+CHECKOUT OPTIONS:
+  livemap-ios-sdk:
+    :commit: 8ca28554ef0928aa1a0cdcbb52edc476aaa32fc2
+    :git: "git@github.com:wemap/livemap-ios-sdk.git"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_wemap_sdk: 39d1302549f8f845d99d08ae95b00a659eb64016
+  livemap-ios-sdk: d3235e4921abc43c139138879b1894fac165a8db
+
+PODFILE CHECKSUM: e37f09f74b0e360d702346210376d10635e6e023
+
+COCOAPODS: 1.11.2
