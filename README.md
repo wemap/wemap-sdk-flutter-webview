@@ -1,15 +1,70 @@
 # flutter_wemap_sdk
 
-A new Flutter plugin project.
+A Flutter plugin to display wemap's livemap.
 
 ## Getting Started
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+#### installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Create new flutter application
+```
+flutter create sample_flutter_wemap_sdk && cd sample_flutter_wemap_sdk
+```
 
+- Add flutter_wemap_sdk plugin to your pubspec.yaml `dependencies`:
+```
+flutter_wemap_sdk:
+    git:
+    url: https://github.com/wemap/flutter_wemap_sdk.git
+    ref: master
+```
+
+#### iOS
+
+- update `Podfile`
+```
+  use_frameworks! :linkage => :static
+  use_modular_headers!
+
+  pod 'livemap-ios-sdk', :git => 'git@github.com:wemap/livemap-ios-sdk.git', :branch => 'master'
+  platform :ios, '11.0'
+```
+
+- install 
+`cd ios/ && pod install`
+
+
+#### android
+
+not currently supported
+
+
+#### using
+
+
+- instanciate && return `Livemap` from `emmid` & `token`
+
+```
+class MyHomePage extends StatelessWidget {
+  final String title;
+  const MyHomePage({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    const Map<String, dynamic> creationParams = <String, dynamic>{
+      "token": "GUHTU6TYAWWQHUSR5Z5JZNMXX",
+      "emmid": 21262
+    };
+
+    return Scaffold(
+        appBar: AppBar(title: Text(title)),
+        body: Container(
+            constraints: const BoxConstraints.expand(),
+            child: const Livemap(options: creationParams)));
+  }
+}
+```
+
+- use controller & subscribes to event:
+
+see [example/](example/lib/map_view.dart)
