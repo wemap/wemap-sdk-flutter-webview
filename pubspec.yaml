@@ -12,6 +12,12 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
 
+  maplibre_gl_platform_interface:
+    git:
+      url: https://github.com/m0nac0/flutter-maplibre-gl.git
+      path: maplibre_gl_platform_interface
+      ref: main
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -38,7 +44,7 @@ flutter:
         package: com.example.flutter_wemap_sdk
         pluginClass: FlutterWemapSdkPlugin
       ios:
-        pluginClass: FlutterWemapSdkPlugin
+        pluginClass: FlutterLivemap
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
