@@ -8,8 +8,8 @@
 #import "flutter_wemap_sdk-Swift.h"
 #endif
 
-@implementation FlutterWemapSdkPlugin
+@implementation FlutterLivemap
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftFlutterWemapSdkPlugin registerWithRegistrar:registrar];
+  [Livemap registerWithRegistrar:registrar];
 }
 @end

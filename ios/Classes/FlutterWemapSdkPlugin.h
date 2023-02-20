@@ -1,4 +1,4 @@
 #import <Flutter/Flutter.h>
 
-@interface FlutterWemapSdkPlugin : NSObject<FlutterPlugin>
+@interface FlutterLivemap : NSObject<FlutterPlugin>
 @end
