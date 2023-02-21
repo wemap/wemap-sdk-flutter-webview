@@ -69,4 +69,17 @@ class MyHomePage extends StatelessWidget {
 
 see [example/](example/lib/map_view.dart)
 
+  - events:
+    - `onMapReady`
+    - `onPinpointOpen`
+    - `onPinpointClose`
+    - `onContentUpdated`
+
+  - methods:
+    - `openPinpoint`
+    - `closePinpoint`
+    - `setCenter`
+    - `centerTo`
+
+
 ![Simulator Screen Shot](https://user-images.githubusercontent.com/9257198/220157247-e55a1889-9470-4f6a-8afb-f58d94fe565d.png)
