@@ -81,9 +81,36 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                 self.receiveFromFlutter(text: text)
                 
                 result("receiveFromFlutter success")
-         
-            //     case "setCenter":
-            //         self.wemap.centerTo(center: Coordinates(latitude: 43.618214, longitude: 3.834515, altitude: 0), zoom: 20)
+                
+            case "openPinpoint":
+                guard let args = call.arguments as? [String: Any],
+                    let pinpointId = args["pinpoint"] as? Int else {
+                        return result(FlutterError(code: "-1", message: "Error", details: nil))
+                    }
+                self.wemap.openPinpoint(WemapPinpointId: pinpointId)
+
+            case "closePinpoint":
+                self.wemap.closePinpoint()
+
+            case "setCenter":
+                guard let args = call.arguments as? [String: Any],
+                let center = args["center"] as? [String: Any],
+                let latitude = center["latitude"] as? Double,
+                let longitude = center["longitude"] as? Double else {
+                    return result(FlutterError(code: "-1", message: "Error", details: nil))
+                }
+                self.wemap.setCenter(center: Coordinates(latitude: latitude, longitude: longitude))
+
+            case "centerTo":
+                guard let args = call.arguments as? [String: Any],
+                let center = args["center"] as? [String: Any],
+                let latitude = center["latitude"] as? Double,
+                let longitude = center["longitude"] as? Double,
+                let zoom = args["zoom"] as? Double else {
+                    return result(FlutterError(code: "-1", message: "Error", details: nil))
+                }
+                self.wemap.centerTo(center: Coordinates(latitude: latitude, longitude: longitude), zoom: zoom)
+
             default:
                 result(FlutterMethodNotImplemented)
             }

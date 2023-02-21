@@ -83,7 +83,20 @@ class LivemapController {
     }
   }
 
-  Future<void> setCenter() async {
-    await _channel.invokeMethod('setCenter');
+  Future<void> openPinpoint(int pinpointId) async {
+    await _channel.invokeMethod('openPinpoint', {"pinpoint": pinpointId});
+  }
+
+  Future<void> closePinpoint() async {
+    await _channel.invokeMethod('closePinpoint');
+  }
+
+  Future<void> setCenter({required Map<String, dynamic> center}) async {
+    await _channel.invokeMethod('setCenter', {"center": center});
+  }
+
+  Future<void> centerTo(
+      {required Map<String, dynamic> center, required double zoom}) async {
+    await _channel.invokeMethod('centerTo', {"center": center, "zoom": zoom});
   }
 }
