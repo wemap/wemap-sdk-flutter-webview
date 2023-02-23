@@ -36,7 +36,7 @@ flutter_wemap_sdk:
 
 #### android
 
-not currently supported
+- add `compileSdkVersion 33` to your app's `build.gradle` (`android/app/build.gradle`)
 
 
 #### using
@@ -53,7 +53,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     const Map<String, dynamic> creationParams = <String, dynamic>{
       "token": "GUHTU6TYAWWQHUSR5Z5JZNMXX",
-      "emmid": 21262
+      "emmid": 22418
     };
 
     return Scaffold(
