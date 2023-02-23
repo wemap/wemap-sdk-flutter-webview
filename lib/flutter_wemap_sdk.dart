@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -54,6 +55,16 @@ class LivemapState extends State<Livemap> {
   @override
   Widget build(BuildContext context) {
     const String viewType = 'WemapView';
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return AndroidView(
+        viewType: viewType,
+        layoutDirection: TextDirection.ltr,
+        creationParams: widget.options,
+        onPlatformViewCreated: _onPlatformViewCreated,
+        creationParamsCodec: const StandardMessageCodec(),
+      );
+    }
 
     return UiKitView(
       viewType: viewType,

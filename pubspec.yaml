@@ -41,8 +41,8 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.flutter_wemap_sdk
-        pluginClass: FlutterWemapSdkPlugin
+        package: com.getwemap.flutter_wemap_sdk
+        pluginClass: FlutterLivemap
       ios:
         pluginClass: FlutterLivemap
 

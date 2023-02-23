@@ -1,3 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.example.flutter_wemap_sdk">
+  package="com.example.flutter_wemap_sdk"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-sdk tools:overrideLibrary="com.getwemap.livemap.sdk, com.getwemap.providers, com.getwemap.commons"/>
 </manifest>

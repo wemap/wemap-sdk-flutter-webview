@@ -25,11 +25,16 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dependencies {
+        implementation 'com.getwemap:livemap-sdk:1.14.0'
+        implementation 'com.google.code.gson:gson:2.8.9'
     }
 
     kotlinOptions {
