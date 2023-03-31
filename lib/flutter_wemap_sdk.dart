@@ -18,6 +18,11 @@ class Livemap extends StatefulWidget {
   final OnPinpointOpenCallback? onPinpointOpen;
   final OnPinpointCloseCallback? onPinpointClose;
   final OnContentUpdatedCallback? onContentUpdated;
+  final OnIndoorFeatureClickCallback? onIndoorFeatureClick;
+  // final OnFloorChangedCallback? onFloorChanged;
+  final OnIndoorLevelChangedCallback? onIndoorLevelChanged;
+  final OnIndoorLevelsChangedCallback? onIndoorLevelsChanged;
+  final OnMapClickCallback? onMapClick;
 
   const Livemap({
     super.key,
@@ -27,6 +32,11 @@ class Livemap extends StatefulWidget {
     this.onPinpointOpen,
     this.onPinpointClose,
     this.onContentUpdated,
+    this.onIndoorFeatureClick,
+    // this.onFloorChanged,
+    this.onIndoorLevelChanged,
+    this.onIndoorLevelsChanged,
+    this.onMapClick,
   });
 
   @override
@@ -42,7 +52,12 @@ class LivemapState extends State<Livemap> {
           onMapReady: widget.onMapReady,
           onPinpointOpen: widget.onPinpointOpen,
           onPinpointClose: widget.onPinpointClose,
-          onContentUpdated: widget.onContentUpdated);
+          onContentUpdated: widget.onContentUpdated,
+          onIndoorFeatureClick: widget.onIndoorFeatureClick,
+          // onFloorChanged: widget.onFloorChanged,
+          onIndoorLevelChanged: widget.onIndoorLevelChanged,
+          onIndoorLevelsChanged: widget.onIndoorLevelsChanged,
+          onMapClick: widget.onMapClick);
     });
 
     // share livemapController
