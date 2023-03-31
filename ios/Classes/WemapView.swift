@@ -89,8 +89,25 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                     }
                 self.wemap.openPinpoint(WemapPinpointId: pinpointId)
 
+                
+            case "setZoom":
+                guard let args = call.arguments as? [String: Any],
+                    let zoom = args["zoom"] as? Double else {
+                        return result(FlutterError(code: "-1", message: "Error", details: nil))
+                    }
+                self.wemap.setZoom(zoom: zoom)
+                
             case "closePinpoint":
                 self.wemap.closePinpoint()
+                
+            case "setIndoorFeatureState":
+                guard let args = call.arguments as? [String: Any],
+                    let pinpointId = args["id"] as? Int,
+                      let state = args["state"] as? [String: Any] else {
+                        return result(FlutterError(code: "-1", message: "Error", details: nil))
+                    }
+                let selected = state["selected"] as! Bool
+                self.wemap.setIndoorFeatureState(id: pinpointId, state: ["selected": selected])
 
             case "setCenter":
                 guard let args = call.arguments as? [String: Any],
@@ -110,6 +127,21 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                     return result(FlutterError(code: "-1", message: "Error", details: nil))
                 }
                 self.wemap.centerTo(center: Coordinates(latitude: latitude, longitude: longitude), zoom: zoom)
+  
+            case "easeTo":
+                guard let args = call.arguments as? [String: Any],
+                      let center = args["center"] as? [String: Any],
+                      let latitude = center["latitude"] as? Double,
+                      let longitude = center["longitude"] as? Double,
+                      let zoom = args["zoom"] as? Double,
+                      let padding = args["padding"] as? [String: Double] else {
+                    return result(FlutterError(code: "-1", message: "Error", details: nil))
+                }
+                 self.wemap.easeTo(center: Coordinates(latitude: latitude, longitude: longitude),
+                                   zoom: zoom,
+                                   padding: padding)
+                return result(nil)
+                
 
             default:
                 result(FlutterMethodNotImplemented)
@@ -129,6 +161,10 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
         channel.invokeMethod("onMapReady", arguments: nil)
     }
     
+    func sendOnMapClick(_ coordinates: Coordinates) {
+        channel.invokeMethod("onMapClick", arguments: coordinates.toJSONObject())
+    }
+    
     func sendOnPinpointOpen(_ pinpoint: WemapPinpoint) {
         channel.invokeMethod("onPinpointOpen", arguments: pinpoint.toJSONObject())
     }
@@ -141,12 +177,28 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
         channel.invokeMethod("onContentUpdated", arguments: pinpoints.map {$0.toJSONObject()})
     }
     
+    func sendOnIndoorFeatureClick(_ data: [String: Any]) {
+        channel.invokeMethod("onIndoorFeatureClick", arguments: data)
+    }
+    
+    func sendOnIndoorLevelChanged(_ data: [String: Any]) {
+        channel.invokeMethod("onIndoorLevelChanged", arguments: data)
+    }
+    
+    func sendOnIndoorLevelsChanged(_ data: [String: Any]) {
+        channel.invokeMethod("onIndoorLevelsChanged", arguments: data)
+    }
+    
     func receiveFromFlutter(text: String) {}
     
     // subscribe to wemap-sdk events
     @objc public func waitForReady(_ wemapController: wemapsdk) {
         print("Livemap is Ready")
         sendOnMapReady()
+    }
+    
+    @objc public func onMapClick(_ wemapController: wemapsdk, coordinates: Coordinates) {
+        sendOnMapClick(coordinates)
     }
     
     @objc public func onPinpointOpen(_ wemapController: wemapsdk, pinpoint: WemapPinpoint) {
@@ -160,7 +212,18 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
     }
     
     @objc public func onContentUpdated(_ wemapController: wemapsdk, pinpoints: [WemapPinpoint], contentUpdatedQuery: ContentUpdatedQuery) {
-          print("Content Updated (WemapPinpoint):")
           sendOnContentUpdated(pinpoints)
        }
+    
+    @objc public func onIndoorFeatureClick(_ wemapController: wemapsdk, data: [String: Any]) {
+        sendOnIndoorFeatureClick(data)
+    }
+
+    @objc public func onIndoorLevelChanged(_ wemapController: wemapsdk, data: [String: Any]) {
+        sendOnIndoorLevelChanged(data)
+    }
+
+    @objc public func onIndoorLevelsChanged(_ wemapController: wemapsdk, data: [String:Any]) {
+        sendOnIndoorLevelsChanged(data)
+    }
 }
