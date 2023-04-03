@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:flutter/services.dart';
 import 'package:maplibre_gl_platform_interface/maplibre_gl_platform_interface.dart';
 
@@ -9,6 +12,13 @@ typedef void OnIndoorFeatureClickCallback(dynamic data);
 typedef void OnIndoorLevelChangedCallback(dynamic data);
 typedef void OnIndoorLevelsChangedCallback(List<dynamic> data);
 typedef void OnMapClickCallback(dynamic coordinates);
+// typedef void OnContentUpdatedCallback(List<dynamic> pinpoints);
+typedef void OnPinpointUpdatedCallback(List<dynamic> pinpoints);
+typedef void OnEventUpdatedCallback(List<dynamic> events);
+
+typedef void OnUserLoginCallback();
+typedef GetZoomCallback = void Function(dynamic zoomLevel);
+typedef FindNearestPinpointsCallback = void Function(String pinpoints);
 
 class LivemapController {
   late MethodChannel _channel;
@@ -21,6 +31,10 @@ class LivemapController {
   final OnIndoorLevelChangedCallback? onIndoorLevelChanged;
   final OnIndoorLevelsChangedCallback? onIndoorLevelsChanged;
   final OnMapClickCallback? onMapClick;
+  final OnPinpointUpdatedCallback? onPinpointUpdated;
+  final OnEventUpdatedCallback? onEventUpdated;
+
+  final OnUserLoginCallback? onUserLogin;
 
   final onMapReadyPlatform = ArgumentCallbacks<void>();
   final onPinpointOpenPlatform = ArgumentCallbacks<dynamic>();
@@ -31,6 +45,10 @@ class LivemapController {
   final onIndoorLevelChangedPlatform = ArgumentCallbacks<dynamic>();
   final onIndoorLevelsChangedPlatform = ArgumentCallbacks<List<dynamic>>();
   final onMapClickPlatform = ArgumentCallbacks<dynamic>();
+  final onPinpointUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
+  final onEventUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
+
+  final onUserLoginPlatform = ArgumentCallbacks<void>();
 
   LivemapController(int id,
       {this.onMapReady,
@@ -41,7 +59,11 @@ class LivemapController {
       //this.onFloorChanged,
       this.onIndoorLevelChanged,
       this.onIndoorLevelsChanged,
-      this.onMapClick}) {
+      this.onMapClick,
+      // this.onContentUpdated,
+      this.onPinpointUpdated,
+      this.onEventUpdated,
+      this.onUserLogin}) {
     _channel = MethodChannel('MapView/$id');
     _channel.setMethodCallHandler(_handleMethod);
 
@@ -76,9 +98,21 @@ class LivemapController {
     //   }
     // });
 
-    onContentUpdatedPlatform.add((List<dynamic> pinpoints) {
-      if (onContentUpdated != null) {
-        onContentUpdated!(pinpoints);
+    onPinpointUpdatedPlatform.add((List<dynamic> pinpoints) {
+      if (onPinpointUpdated != null) {
+        onPinpointUpdated!(pinpoints);
+      }
+    });
+
+    onEventUpdatedPlatform.add((List<dynamic> events) {
+      if (onEventUpdated != null) {
+        onEventUpdated!(events);
+      }
+    });
+
+    onUserLoginPlatform.add((_) {
+      if (onUserLogin != null) {
+        onUserLogin!();
       }
     });
 
@@ -144,9 +178,17 @@ class LivemapController {
         dynamic data = call.arguments as dynamic;
         onIndoorLevelsChangedPlatform(data);
         break;
-      case 'onContentUpdated':
+      case 'onPinpointUpdated':
         List<dynamic> pinpoints = call.arguments as List<dynamic>;
-        onContentUpdatedPlatform(pinpoints);
+        onPinpointUpdatedPlatform(pinpoints);
+        break;
+      case 'onEventUpdated':
+        List<dynamic> pinpoints = call.arguments as List<dynamic>;
+        onEventUpdatedPlatform(pinpoints);
+        break;
+
+      case 'onUserLogin':
+        onUserLoginPlatform(null);
         break;
     }
   }
@@ -160,7 +202,6 @@ class LivemapController {
       print("Error from native: $e.message");
     }
   }
-
 
   Future<void> openPinpoint(int pinpointId,
       {Map<String, dynamic>? options}) async {
@@ -209,4 +250,117 @@ class LivemapController {
     _channel.invokeMethod('setIndoorFeatureState', {'id': id, 'state': state});
   }
 
+  Future<void> openEvent(int eventId) async {
+    await _channel.invokeMethod('openEvent', {"event": eventId});
+  }
+
+  Future<void> closeEvent() async {
+    await _channel.invokeMethod('closeEvent');
+  }
+
+  Future<void> openList(int listId) async {
+    await _channel.invokeMethod('openList', {"list": listId});
+  }
+
+  Future<void> closeList() async {
+    await _channel.invokeMethod('closeList');
+  }
+
+  Future<void> closePopin() async {
+    await _channel.invokeMethod('closePopin');
+  }
+
+  Future<void> setFilters({required Map<String, dynamic> filters}) async {
+    await _channel.invokeMethod('setFilters', {"filters": filters});
+  }
+
+  Future<void> navigateToPinpoint(int pinpointId) async {
+    await _channel.invokeMethod('navigateToPinpoint', {"pinpoint": pinpointId});
+  }
+
+  Future<void> stopNavigation() async {
+    await _channel.invokeMethod('stopNavigation');
+  }
+
+  Future<void> signInByToken({required String accessToken}) async {
+    await _channel.invokeMethod('signInByToken', {"accessToken": accessToken});
+  }
+
+  Future<void> enableSidebar() async {
+    await _channel.invokeMethod('enableSidebar');
+  }
+
+  Future<void> disableSidebar() async {
+    await _channel.invokeMethod('disableSidebar');
+  }
+
+  Future<void> signOut() async {
+    await _channel.invokeMethod('signOut');
+  }
+
+  Future<void> setSourceLists({required List<int> sourceLists}) async {
+    await _channel.invokeMethod('setSourceLists', {"sourceLists": sourceLists});
+  }
+
+  Future<void> setPinpoints(
+      {required List<Map<String, dynamic>> pinpoints}) async {
+    await _channel.invokeMethod('setPinpoints', {"pinpoints": pinpoints});
+  }
+
+  Future<void> setEvents({required List<Map<String, dynamic>> events}) async {
+    await _channel.invokeMethod('setEvents', {"events": events});
+  }
+
+  Future<void> aroundMe() async {
+    await _channel.invokeMethod('aroundMe');
+  }
+
+  Future<void> enableAnalytics() async {
+    await _channel.invokeMethod('enableAnalytics');
+  }
+
+  Future<void> disableAnalytics() async {
+    await _channel.invokeMethod('disableAnalytics');
+  }
+
+  Future<void> drawPolyline(
+      {required List<Map<String, dynamic>> coordinates}) async {
+    await _channel.invokeMethod('drawPolyline', {"coordinates": coordinates});
+  }
+
+  Future<void> removePolyline({required String polylineId}) async {
+    await _channel.invokeMethod('removePolyline', {"polylineId": polylineId});
+  }
+
+  Future<void> addmarker({required Map<String, dynamic> marker}) async {
+    await _channel.invokeMethod('addmarker', {"marker": marker});
+  }
+
+  Future<void> removeMarker({required String markerId}) async {
+    await _channel.invokeMethod('removeMarker', {"markerId": markerId});
+  }
+
+  Future<void> findNearestPinpoints(
+      {required Map<String, dynamic> center,
+      required FindNearestPinpointsCallback
+          findNearestPinpointsCallback}) async {
+    try {
+      final String result = await _channel
+          .invokeMethod('findNearestPinpoints', {"center": center});
+      findNearestPinpointsCallback(result);
+      print("Result(findNearestPinpoints) from native: $result");
+    } on PlatformException catch (e) {
+      print("Error from native: $e.message");
+    }
+  }
+
+  Future<void> getZoom({required GetZoomCallback getZoomCallback}) async {
+    try {
+      final double result = await _channel.invokeMethod('getZoom');
+      getZoomCallback(result);
+      print("Result from native: $result");
+    } on PlatformException catch (e) {
+      print("Error from native: $e.message");
+    }
+  }
 }
