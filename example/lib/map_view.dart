@@ -4,7 +4,7 @@ import 'package:flutter_wemap_sdk/livemap_controller.dart';
 
 class MapView extends StatelessWidget {
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
-  const MapView({super.key, required this.scaffoldMessengerKey});
+  MapView({super.key, required this.scaffoldMessengerKey});
 
   void onNativeMapReady() {
     const snackBar = SnackBar(content: Text('Map is Ready'));
@@ -25,9 +25,16 @@ class MapView extends StatelessWidget {
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
-  void onContentUpdated(List<dynamic> pinpoints) {
+  void onPinpointUpdated(List<dynamic> pinpoints) {
     var snackBar =
         SnackBar(content: Text('Updated Pinpoints count: ${pinpoints.length}'));
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  }
+
+  void onEventUpdated(List<dynamic> events) {
+    var snackBar =
+    SnackBar(content: Text('Updated Events count: ${events.length}'));
     scaffoldMessengerKey.currentState?.clearSnackBars();
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
@@ -37,6 +44,13 @@ class MapView extends StatelessWidget {
     const snackBar = SnackBar(content: Text('Livemap created'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
     // whatever with mapController
+  }
+
+  void onUserLogin(){
+    const snackBar = SnackBar(content: Text('User Logged in'));
+
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
   @override
@@ -52,7 +66,9 @@ class MapView extends StatelessWidget {
       onMapReady: onNativeMapReady,
       onPinpointOpen: onPinpointOpen,
       onPinpointClose: onPinpointClose,
-      onContentUpdated: onContentUpdated,
+      onPinpointUpdated: onPinpointUpdated,
+      onEventUpdated: onEventUpdated,
+      onUserLogin: onUserLogin,
     );
   }
 }

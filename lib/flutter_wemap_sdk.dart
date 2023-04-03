@@ -17,27 +17,33 @@ class Livemap extends StatefulWidget {
   final OnMapReadyCallback? onMapReady;
   final OnPinpointOpenCallback? onPinpointOpen;
   final OnPinpointCloseCallback? onPinpointClose;
-  final OnContentUpdatedCallback? onContentUpdated;
   final OnIndoorFeatureClickCallback? onIndoorFeatureClick;
   // final OnFloorChangedCallback? onFloorChanged;
   final OnIndoorLevelChangedCallback? onIndoorLevelChanged;
   final OnIndoorLevelsChangedCallback? onIndoorLevelsChanged;
   final OnMapClickCallback? onMapClick;
+  // final OnContentUpdatedCallback? onContentUpdated;
+  final OnPinpointUpdatedCallback? onPinpointUpdated;
+  final OnEventUpdatedCallback? onEventUpdated;
 
-  const Livemap({
-    super.key,
-    required this.options,
-    this.onMapCreated,
-    this.onMapReady,
-    this.onPinpointOpen,
-    this.onPinpointClose,
-    this.onContentUpdated,
-    this.onIndoorFeatureClick,
-    // this.onFloorChanged,
-    this.onIndoorLevelChanged,
-    this.onIndoorLevelsChanged,
-    this.onMapClick,
-  });
+  final OnUserLoginCallback? onUserLogin;
+
+  const Livemap(
+      {super.key,
+      required this.options,
+      this.onMapCreated,
+      this.onMapReady,
+      this.onPinpointOpen,
+      this.onPinpointClose,
+      this.onIndoorFeatureClick,
+      // this.onFloorChanged,
+      this.onIndoorLevelChanged,
+      this.onIndoorLevelsChanged,
+      this.onMapClick,
+      // this.onContentUpdated,
+      this.onPinpointUpdated,
+      this.onEventUpdated,
+      this.onUserLogin});
 
   @override
   LivemapState createState() => LivemapState();
@@ -48,16 +54,22 @@ class LivemapState extends State<Livemap> {
 
   void _onPlatformViewCreated(int id) {
     setState(() {
-      _mapController = LivemapController(id,
-          onMapReady: widget.onMapReady,
-          onPinpointOpen: widget.onPinpointOpen,
-          onPinpointClose: widget.onPinpointClose,
-          onContentUpdated: widget.onContentUpdated,
-          onIndoorFeatureClick: widget.onIndoorFeatureClick,
-          // onFloorChanged: widget.onFloorChanged,
-          onIndoorLevelChanged: widget.onIndoorLevelChanged,
-          onIndoorLevelsChanged: widget.onIndoorLevelsChanged,
-          onMapClick: widget.onMapClick);
+      _mapController = LivemapController(
+        id,
+        onMapReady: widget.onMapReady,
+        onPinpointOpen: widget.onPinpointOpen,
+        onPinpointClose: widget.onPinpointClose,
+        onIndoorFeatureClick: widget.onIndoorFeatureClick,
+        // onFloorChanged: widget.onFloorChanged,
+        onIndoorLevelChanged: widget.onIndoorLevelChanged,
+        onIndoorLevelsChanged: widget.onIndoorLevelsChanged,
+        onMapClick: widget.onMapClick,
+        // onContentUpdated: widget.onContentUpdated,
+        onPinpointUpdated: widget.onPinpointUpdated,
+        onEventUpdated: widget.onEventUpdated,
+
+        onUserLogin: widget.onUserLogin,
+      );
     });
 
     // share livemapController
