@@ -18,7 +18,7 @@ typedef void OnEventUpdatedCallback(List<dynamic> events);
 
 typedef void OnUserLoginCallback();
 typedef GetZoomCallback = void Function(dynamic zoomLevel);
-typedef FindNearestPinpointsCallback = void Function(String pinpoints);
+typedef FindNearestPinpointsCallback = void Function(List<dynamic> pinpoints);
 
 class LivemapController {
   late MethodChannel _channel;
@@ -116,9 +116,9 @@ class LivemapController {
       }
     });
 
-    onIndoorFeatureClickPlatform.add((dynamic data) {
+    onIndoorFeatureClickPlatform.add((dynamic indoorFeature) {
       if (onIndoorFeatureClick != null) {
-        onIndoorFeatureClick!(data);
+        onIndoorFeatureClick!(indoorFeature);
       }
     });
 
@@ -152,7 +152,6 @@ class LivemapController {
       case 'onMapClick':
         dynamic coordinates = call.arguments as dynamic;
         onMapClickPlatform(coordinates);
-
         break;
       case 'onPinpointOpen':
         dynamic pinpoint = call.arguments as dynamic;
@@ -162,13 +161,12 @@ class LivemapController {
         onPinpointClosePlatform(null);
         break;
       case 'onIndoorFeatureClick':
-        dynamic data = call.arguments as dynamic;
-        onIndoorFeatureClickPlatform(data);
+        dynamic indoorFeature = call.arguments as dynamic;
+        onIndoorFeatureClickPlatform(indoorFeature);
         break;
       case 'onFloorChanged':
         dynamic data = call.arguments as dynamic;
         // onFloorChangedPlatform(data);
-
         break;
       case 'onIndoorLevelChanged':
         dynamic data = call.arguments as dynamic;
@@ -186,7 +184,6 @@ class LivemapController {
         List<dynamic> pinpoints = call.arguments as List<dynamic>;
         onEventUpdatedPlatform(pinpoints);
         break;
-
       case 'onUserLogin':
         onUserLoginPlatform(null);
         break;
@@ -233,16 +230,32 @@ class LivemapController {
   Future<void> easeTo(
       {required Map<String, dynamic> center,
       double? zoom,
-      Map<String, dynamic>? options,
-      Map<String, dynamic>? padding}) async {
-    Map<String, dynamic> args = {"center": center};
+      double? bearing,
+      double? pitch,
+      double? duration,
+      bool? animate,
+      Map<String, dynamic>? padding,
+        }) async {
+    Map<String, dynamic> easeToOptions = {"center": center};
     if (zoom != null) {
-      args['zoom'] = zoom!;
+      easeToOptions['zoom'] = zoom!;
     }
     if (padding != null) {
-      args['padding'] = padding!;
+      easeToOptions['padding'] = padding!;
     }
-    return _channel.invokeMethod('easeTo', args);
+    if (bearing != null) {
+      easeToOptions['bearing'] = bearing!;
+    }
+    if (pitch != null) {
+      easeToOptions['pitch'] = pitch!;
+    }
+    if (duration != null) {
+      easeToOptions['duration'] = duration!;
+    }
+    if (animate != null) {
+      easeToOptions['animate'] = animate!;
+    }
+    return _channel.invokeMethod('easeTo', {"easeToOptions" : easeToOptions});
   }
 
   Future<void> setIndoorFeatureState(
@@ -345,7 +358,7 @@ class LivemapController {
       required FindNearestPinpointsCallback
           findNearestPinpointsCallback}) async {
     try {
-      final String result = await _channel
+      final List<dynamic> result = await _channel
           .invokeMethod('findNearestPinpoints', {"center": center});
       findNearestPinpointsCallback(result);
       print("Result(findNearestPinpoints) from native: $result");
@@ -363,4 +376,9 @@ class LivemapController {
       print("Error from native: $e.message");
     }
   }
+
+
+
+
+
 }

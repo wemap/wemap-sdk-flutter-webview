@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_wemap_sdk/flutter_wemap_sdk.dart';
 import 'package:flutter_wemap_sdk/livemap_controller.dart';
@@ -6,8 +8,38 @@ class MapView extends StatelessWidget {
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
   MapView({super.key, required this.scaffoldMessengerKey});
 
+  late LivemapController _mapController;
   void onNativeMapReady() {
     const snackBar = SnackBar(content: Text('Map is Ready'));
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  }
+  void onMapClick(dynamic coordinates){
+    const snackBar = SnackBar(content: Text('Map is clicked'));
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+    // _mapController.easeTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 15.0, duration: 2000,
+    // padding: {
+    //   "right" : 1.2,
+    //   "top" : 2.1,
+    //   "left" : 1.2,
+    //   "bottom" : 1.3
+    // }
+    // );
+    // _mapController.findNearestPinpoints(center: {"latitude": coordinates["latitude"], "longitude": coordinates["longitude"]} ,
+    // findNearestPinpointsCallback: (pinpoints){
+    //   print("pin --> ${pinpoints.toString()}");
+    // });
+  }
+  void onIndoorFeatureClick(dynamic indoorFeature){
+    const snackBar = SnackBar(content: Text('indoor feature is clicked'));
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  }
+  void onIndoorLevelChanged(dynamic level){
+    const snackBar = SnackBar(content: Text('indoor level is changed'));
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  }
+
+  void onIndoorLevelsChanged(List<dynamic> levels){
+    const snackBar = SnackBar(content: Text('indoor levels are changed'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
@@ -41,6 +73,7 @@ class MapView extends StatelessWidget {
 
   // bind controller
   void _onMapCreated(LivemapController mapController) {
+    _mapController = mapController;
     const snackBar = SnackBar(content: Text('Livemap created'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
     // whatever with mapController
@@ -64,11 +97,15 @@ class MapView extends StatelessWidget {
       options: creationParams,
       onMapCreated: _onMapCreated,
       onMapReady: onNativeMapReady,
+      onMapClick: onMapClick,
       onPinpointOpen: onPinpointOpen,
       onPinpointClose: onPinpointClose,
       onPinpointUpdated: onPinpointUpdated,
       onEventUpdated: onEventUpdated,
       onUserLogin: onUserLogin,
+      onIndoorFeatureClick: onIndoorFeatureClick,
+      onIndoorLevelChanged: onIndoorLevelChanged,
+      onIndoorLevelsChanged: onIndoorLevelsChanged,
     );
   }
 }

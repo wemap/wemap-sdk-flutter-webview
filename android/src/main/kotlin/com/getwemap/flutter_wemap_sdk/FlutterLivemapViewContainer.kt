@@ -1,20 +1,21 @@
 package com.getwemap.flutter_wemap_sdk
 
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.annotation.NonNull
+import androidx.annotation.RequiresApi
 import com.getwemap.livemap.sdk.Livemap
 import com.getwemap.livemap.sdk.LivemapView
 import com.getwemap.livemap.sdk.callback.FindNearestPinpointsCallback
 import com.getwemap.livemap.sdk.callback.GetZoomCallback
 import com.getwemap.livemap.sdk.callback.LivemapReadyCallback
-import com.getwemap.livemap.sdk.listener.ContentUpdatedListener
-import com.getwemap.livemap.sdk.listener.PinpointCloseListener
-import com.getwemap.livemap.sdk.listener.PinpointOpenListener
-import com.getwemap.livemap.sdk.listener.UserLoginListener
+import com.getwemap.livemap.sdk.listener.*
 import com.getwemap.livemap.sdk.model.*
+import com.getwemap.livemap.sdk.options.EaseToOptions
 import com.getwemap.livemap.sdk.options.LivemapOptions
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -27,6 +28,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.platform.PlatformView
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.reflect.TypeVariable
+import java.util.Objects
 
 val gson: Gson = GsonBuilder()
     .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
@@ -42,6 +45,10 @@ class FlutterLivemapViewContainer(context: Context,
     PinpointOpenListener,
     PinpointCloseListener,
     ContentUpdatedListener,
+    MapClickListener,
+    IndoorFeatureClickListener,
+    IndoorLevelChangedListener,
+    IndoorLevelsChangedListener,
 
     UserLoginListener
 {
@@ -67,6 +74,7 @@ class FlutterLivemapViewContainer(context: Context,
         // trigger callbacks
         (view as LivemapView).getLivemapAsync(this);
     }
+
 
     override fun getView(): View {
         return view
@@ -106,12 +114,45 @@ class FlutterLivemapViewContainer(context: Context,
          livemap.addPinpointOpenListener(this);
          livemap.addPinpointCloseListener(this);
          livemap.addContentUpdatedListener(this);
+         livemap.addMapClickListener(this);
+         livemap.addIndoorFeatureClickListener(this);
+         livemap.addIndoorLevelChangedListener(this);
+         livemap.addIndoorLevelsChangedListener(this);
 
          livemap.addUserLoginListener(this);
+
 
          uiThreadHandler.post {
              sendOnMapReady()
          }
+    }
+
+    override fun onMapClick(coordinates: Coordinates?) {
+        val coords = gson.fromJson(coordinates?.toJson().toString() , HashMap<String, Double>().javaClass)
+        uiThreadHandler.post {
+            channel.invokeMethod("onMapClick", coords)
+        }
+    }
+
+    override fun onIndoorFeatureClick(indoorFeature: IndoorFeature?) {
+            val indoorftrs = gson.fromJson(indoorFeature?.toJson().toString() , HashMap<String, Object>().javaClass)
+            uiThreadHandler.post {
+                    channel.invokeMethod("onIndoorFeatureClick", indoorftrs)
+            }
+    }
+
+    override fun onIndoorLevelChanged(level: Level?) {
+        val lvl = gson.fromJson(level?.toJson().toString() , HashMap<String, Object>().javaClass)
+        uiThreadHandler.post {
+            channel.invokeMethod("onIndoorLevelChanged", lvl)
+        }
+    }
+
+    override fun onIndoorLevelsChanged(levels: Array<out Level>?) {
+        val lvls = levels?.map {gson.fromJson(it.toJson().toString(), HashMap<String, Object>().javaClass) }
+        uiThreadHandler.post {
+            channel.invokeMethod("onIndoorLevelsChanged", lvls)
+        }
     }
 
     override fun onUserLogin() {
@@ -119,6 +160,7 @@ class FlutterLivemapViewContainer(context: Context,
             channel.invokeMethod("onUserLogin", null)
         }
     }
+
 
     override fun onMethodCall(methodCall: MethodCall, result: MethodChannel.Result) {
         when (methodCall.method) {
@@ -149,8 +191,10 @@ class FlutterLivemapViewContainer(context: Context,
             "addMarker" -> addMarker(methodCall, result)
             "removeMarker" -> removeMarker(methodCall, result)
             "findNearestPinpoints" -> findNearestPinpoints(methodCall, result)
-
+            "easeTo" -> easeTo(methodCall, result)
+            "setIndoorFeatureState" -> setIndoorFeatureState(methodCall, result)
             "getZoom" -> getZoom(methodCall, result)
+            "setZoom" -> setZoom(methodCall, result)
 
             else -> result.notImplemented()
         }
@@ -357,11 +401,69 @@ class FlutterLivemapViewContainer(context: Context,
         val jsonObject = JSONObject(center as Map<*, *>)
 
         livemap.findNearestPinpoints(Coordinates.fromJson(jsonObject), FindNearestPinpointsCallback{pinpoints ->
-            val jsonObject = JSONObject(pinpoints.toString())
-            result.success(pinpoints.toString());
+            val pinList : kotlin.collections.List<HashMap<String, Any?>>  = pinpoints.map {pinpoint ->
+                val pinHashMap = HashMap<String, Any?>()
+                pinHashMap["id"] = pinpoint.id
+                pinHashMap["name"] = pinpoint.name
+                val coordinatesMap = HashMap<String, Double>()
+                coordinatesMap["latitude"] = pinpoint.latLngAlt.lat
+                coordinatesMap["longitude"] = pinpoint.latLngAlt.lng
+                pinHashMap["coordinates"] = coordinatesMap
+                pinHashMap["address"] = pinpoint.address
+                pinHashMap["description"] = pinpoint.description
+                pinHashMap["imageUrl"] = pinpoint.imageUrl
+                pinHashMap["linkUrl"] = pinpoint.linkUrl
+                pinHashMap["tags"] = pinpoint.tags.asList()
+////                pinHashMap["externalData"] = pinpoint.externalData
+                pinHashMap["type"] = pinpoint.type
+                pinHashMap["category"] = pinpoint.category
+                pinHashMap["mediaUrl"] = pinpoint.mediaUrl
+                pinHashMap["mediaType"] = pinpoint.mediaType
+////                pinHashMap["geoEntityShape"] = pinpoint.geoEntityShape
+                pinHashMap
+            }
+            result.success(pinList)
         })
     }
 
+    private fun easeTo(methodCall: MethodCall, result: MethodChannel.Result) {
+        val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
+        val easeToOptionsMap: HashMap<String, Any> = params["easeToOptions"] as HashMap<String, Any>
+        val centerMap: HashMap<String, Double> = easeToOptionsMap.get("center") as HashMap<String, Double>
+        val centerJsonObject = JSONObject(centerMap as Map<*, *>)
+        val center: Coordinates = Coordinates.fromJson(centerJsonObject)
+        val paddingMap: HashMap<String, Float>? = easeToOptionsMap.get("padding") as HashMap<String, Float>?
+        val easeToOptions = EaseToOptions()
+        val padding = Padding()
+        if (paddingMap != null){
+            if (paddingMap["right"] != null)
+                padding.right = (paddingMap["right"] as Double).toFloat()
+            if (paddingMap["left"] != null)
+                padding.left = (paddingMap["left"] as Double).toFloat()
+            if (paddingMap["top"] != null)
+                padding.top = (paddingMap["top"] as Double).toFloat()
+            if (paddingMap["bottom"] != null)
+                padding.bottom = (paddingMap["bottom"] as Double).toFloat()
+            easeToOptions.padding = padding
+        }
+
+        easeToOptions.center = center
+        easeToOptions.zoom = (easeToOptionsMap.get("zoom") as Double?)?.toFloat()
+        easeToOptions.animate = easeToOptionsMap.get("animate") as Boolean?
+        easeToOptions.bearing = (easeToOptionsMap.get("bearing") as Double?)?.toFloat()
+        easeToOptions.duration = (easeToOptionsMap.get("duration") as Double?)?.toFloat()
+        easeToOptions.pitch = (easeToOptionsMap.get("pitch") as Double?)?.toFloat()
+        livemap.easeTo(easeToOptions)
+    }
+
+    private fun setIndoorFeatureState(methodCall: MethodCall, result: MethodChannel.Result) {
+        val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
+        val id: Int = params["id"] as Int
+        val stateMap : HashMap<String, Any> = params["state"] as HashMap<String, Any>
+        val indoorFeatureState = IndoorFeatureState()
+        indoorFeatureState.selected = stateMap["selected"] as Boolean
+        livemap.setIndoorFeatureState(id, indoorFeatureState)
+    }
 
 
     private fun getZoom(methodCall: MethodCall, result: MethodChannel.Result) {
@@ -369,6 +471,13 @@ class FlutterLivemapViewContainer(context: Context,
                 result.success(zoomLevel);
             })
         }
+
+    private fun setZoom(methodCall: MethodCall, result: MethodChannel.Result) {
+        val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
+        val zoomLevel: Float = (params["zoom"] as Double).toFloat()
+        livemap.setZoom(zoomLevel)
+    }
+
 
     override fun dispose() {
         channel.setMethodCallHandler(null)
