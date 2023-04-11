@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_wemap_sdk/flutter_wemap_sdk.dart';
-import 'package:flutter_wemap_sdk/flutter_wemap_sdk_platform_interface.dart';
+import 'package:flutter_wemap_sdk/src/flutter_wemap_sdk.dart';
+import 'package:flutter_wemap_sdk/src/flutter_wemap_sdk_platform_interface.dart';
 import 'package:flutter_wemap_sdk/flutter_wemap_sdk_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 

@@ -1,8 +1,5 @@
-import 'dart:convert';
-import 'dart:ffi';
+part of flutter_wemap;
 
-import 'package:flutter/services.dart';
-import 'package:maplibre_gl_platform_interface/maplibre_gl_platform_interface.dart';
 
 typedef void OnMapReadyCallback();
 typedef OnPinpointOpenCallback = void Function(dynamic pinpoint);
@@ -15,11 +12,11 @@ typedef void OnMapClickCallback(dynamic coordinates);
 // typedef void OnContentUpdatedCallback(List<dynamic> pinpoints);
 typedef void OnPinpointUpdatedCallback(List<dynamic> pinpoints);
 typedef void OnEventUpdatedCallback(List<dynamic> events);
-
 typedef void OnUserLoginCallback();
 typedef GetZoomCallback = void Function(dynamic zoomLevel);
 typedef FindNearestPinpointsCallback = void Function(List<dynamic> pinpoints);
 
+/// The controller gives the ability to control and to interact with map
 class LivemapController {
   late MethodChannel _channel;
   final OnMapReadyCallback? onMapReady;
@@ -27,28 +24,28 @@ class LivemapController {
   final OnPinpointCloseCallback? onPinpointClose;
   final OnContentUpdatedCallback? onContentUpdated;
   final OnIndoorFeatureClickCallback? onIndoorFeatureClick;
+
   // final OnFloorChangedCallback? onFloorChanged;
   final OnIndoorLevelChangedCallback? onIndoorLevelChanged;
   final OnIndoorLevelsChangedCallback? onIndoorLevelsChanged;
   final OnMapClickCallback? onMapClick;
   final OnPinpointUpdatedCallback? onPinpointUpdated;
   final OnEventUpdatedCallback? onEventUpdated;
-
   final OnUserLoginCallback? onUserLogin;
 
-  final onMapReadyPlatform = ArgumentCallbacks<void>();
-  final onPinpointOpenPlatform = ArgumentCallbacks<dynamic>();
-  final onPinpointClosePlatform = ArgumentCallbacks<void>();
-  final onContentUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
-  final onIndoorFeatureClickPlatform = ArgumentCallbacks<dynamic>();
-  // final onFloorChangedPlatform = ArgumentCallbacks<dynamic>();
-  final onIndoorLevelChangedPlatform = ArgumentCallbacks<dynamic>();
-  final onIndoorLevelsChangedPlatform = ArgumentCallbacks<List<dynamic>>();
-  final onMapClickPlatform = ArgumentCallbacks<dynamic>();
-  final onPinpointUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
-  final onEventUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
+  final _onMapReadyPlatform = ArgumentCallbacks<void>();
+  final _onPinpointOpenPlatform = ArgumentCallbacks<dynamic>();
+  final _onPinpointClosePlatform = ArgumentCallbacks<void>();
+  final _onContentUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
+  final _onIndoorFeatureClickPlatform = ArgumentCallbacks<dynamic>();
 
-  final onUserLoginPlatform = ArgumentCallbacks<void>();
+  // final _onFloorChangedPlatform = ArgumentCallbacks<dynamic>();
+  final _onIndoorLevelChangedPlatform = ArgumentCallbacks<dynamic>();
+  final _onIndoorLevelsChangedPlatform = ArgumentCallbacks<List<dynamic>>();
+  final _onMapClickPlatform = ArgumentCallbacks<dynamic>();
+  final _onPinpointUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
+  final _onEventUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
+  final _onUserLoginPlatform = ArgumentCallbacks<void>();
 
   LivemapController(int id,
       {this.onMapReady,
@@ -67,74 +64,74 @@ class LivemapController {
     _channel = MethodChannel('MapView/$id');
     _channel.setMethodCallHandler(_handleMethod);
 
-    onMapReadyPlatform.add((_) {
+    _onMapReadyPlatform.add((_) {
       if (onMapReady != null) {
         onMapReady!();
       }
     });
 
-    onMapClickPlatform.add((dynamic coordinates) {
+    _onMapClickPlatform.add((dynamic coordinates) {
       if (onMapClick != null) {
         onMapClick!(coordinates);
       }
     });
 
-    onPinpointOpenPlatform.add((dynamic pinpointId) {
+    _onPinpointOpenPlatform.add((dynamic pinpointId) {
       if (onPinpointOpen != null) {
         onPinpointOpen!(pinpointId);
       }
     });
 
-    onPinpointClosePlatform.add((_) {
+    _onPinpointClosePlatform.add((_) {
       if (onPinpointClose != null) {
         onPinpointClose!();
       }
     });
 
-    // onContentUpdatedPlatform.add((Map<String, dynamic> contentUpdated) {
+    // _onContentUpdatedPlatform.add((Map<String, dynamic> contentUpdated) {
     //   print(contentUpdated);
     //   if (onContentUpdated != null) {
     //     onContentUpdated!(contentUpdated);
     //   }
     // });
 
-    onPinpointUpdatedPlatform.add((List<dynamic> pinpoints) {
+    _onPinpointUpdatedPlatform.add((List<dynamic> pinpoints) {
       if (onPinpointUpdated != null) {
         onPinpointUpdated!(pinpoints);
       }
     });
 
-    onEventUpdatedPlatform.add((List<dynamic> events) {
+    _onEventUpdatedPlatform.add((List<dynamic> events) {
       if (onEventUpdated != null) {
         onEventUpdated!(events);
       }
     });
 
-    onUserLoginPlatform.add((_) {
+    _onUserLoginPlatform.add((_) {
       if (onUserLogin != null) {
         onUserLogin!();
       }
     });
 
-    onIndoorFeatureClickPlatform.add((dynamic indoorFeature) {
+    _onIndoorFeatureClickPlatform.add((dynamic indoorFeature) {
       if (onIndoorFeatureClick != null) {
         onIndoorFeatureClick!(indoorFeature);
       }
     });
 
-    // onFloorChangedPlatform.add((dynamic data) {
+    // _onFloorChangedPlatform.add((dynamic data) {
     //   if (onFloorChanged != null) {
     //     onFloorChanged!(data);
     //   }
     // });
 
-    onIndoorLevelChangedPlatform.add((dynamic data) {
+    _onIndoorLevelChangedPlatform.add((dynamic data) {
       if (onIndoorLevelChanged != null) {
         onIndoorLevelChanged!(data);
       }
     });
 
-    onIndoorLevelsChangedPlatform.add((List<dynamic> data) {
+    _onIndoorLevelsChangedPlatform.add((List<dynamic> data) {
       if (onIndoorLevelsChanged != null) {
         onIndoorLevelsChanged!(data);
       }
@@ -147,45 +144,45 @@ class LivemapController {
         String text = call.arguments as String;
         return Future.value("Text from native: $text");
       case 'onMapReady':
-        onMapReadyPlatform(null);
+        _onMapReadyPlatform(null);
         break;
       case 'onMapClick':
         dynamic coordinates = call.arguments as dynamic;
-        onMapClickPlatform(coordinates);
+        _onMapClickPlatform(coordinates);
         break;
       case 'onPinpointOpen':
         dynamic pinpoint = call.arguments as dynamic;
-        onPinpointOpenPlatform(pinpoint);
+        _onPinpointOpenPlatform(pinpoint);
         break;
       case 'onPinpointClose':
-        onPinpointClosePlatform(null);
+        _onPinpointClosePlatform(null);
         break;
       case 'onIndoorFeatureClick':
         dynamic indoorFeature = call.arguments as dynamic;
-        onIndoorFeatureClickPlatform(indoorFeature);
+        _onIndoorFeatureClickPlatform(indoorFeature);
         break;
       case 'onFloorChanged':
         dynamic data = call.arguments as dynamic;
-        // onFloorChangedPlatform(data);
+        // _onFloorChangedPlatform(data);
         break;
       case 'onIndoorLevelChanged':
         dynamic data = call.arguments as dynamic;
-        onIndoorLevelChangedPlatform(data);
+        _onIndoorLevelChangedPlatform(data);
         break;
       case 'onIndoorLevelsChanged':
         dynamic data = call.arguments as dynamic;
-        onIndoorLevelsChangedPlatform(data);
+        _onIndoorLevelsChangedPlatform(data);
         break;
       case 'onPinpointUpdated':
         List<dynamic> pinpoints = call.arguments as List<dynamic>;
-        onPinpointUpdatedPlatform(pinpoints);
+        _onPinpointUpdatedPlatform(pinpoints);
         break;
       case 'onEventUpdated':
         List<dynamic> pinpoints = call.arguments as List<dynamic>;
-        onEventUpdatedPlatform(pinpoints);
+        _onEventUpdatedPlatform(pinpoints);
         break;
       case 'onUserLogin':
-        onUserLoginPlatform(null);
+        _onUserLoginPlatform(null);
         break;
     }
   }
@@ -200,9 +197,9 @@ class LivemapController {
     }
   }
 
+  /// Open a pinpoint on the map by its Id
   Future<void> openPinpoint(int pinpointId,
       {Map<String, dynamic>? options}) async {
-    print('Pinpoint: $pinpointId');
     Map<String, dynamic> args = {"pinpoint": pinpointId};
     if (options != null) {
       args['options'] = options!;
@@ -210,32 +207,37 @@ class LivemapController {
     await _channel.invokeMethod('openPinpoint', args);
   }
 
+  /// Close the current opened pinpoint
   Future<void> closePinpoint() async {
     await _channel.invokeMethod('closePinpoint');
   }
 
+  /// Set the map's geographical center.
   Future<void> setCenter({required Map<String, dynamic> center}) async {
     await _channel.invokeMethod('setCenter', {"center": center});
   }
 
+  /// Set the map's zoom level.
   Future<void> setZoom({required double zoom}) async {
     await _channel.invokeMethod('setZoom', {"zoom": zoom});
   }
 
+  /// Center the map on the given position and set the zoom.
   Future<void> centerTo(
       {required Map<String, dynamic> center, required double zoom}) async {
     await _channel.invokeMethod('centerTo', {"center": center, "zoom": zoom});
   }
 
-  Future<void> easeTo(
-      {required Map<String, dynamic> center,
-      double? zoom,
-      double? bearing,
-      double? pitch,
-      double? duration,
-      bool? animate,
-      Map<String, dynamic>? padding,
-        }) async {
+  /// Ease the camera to the target location
+  Future<void> easeTo({
+    required Map<String, dynamic> center,
+    double? zoom,
+    double? bearing,
+    double? pitch,
+    double? duration,
+    bool? animate,
+    Map<String, dynamic>? padding,
+  }) async {
     Map<String, dynamic> easeToOptions = {"center": center};
     if (zoom != null) {
       easeToOptions['zoom'] = zoom!;
@@ -255,46 +257,56 @@ class LivemapController {
     if (animate != null) {
       easeToOptions['animate'] = animate!;
     }
-    return _channel.invokeMethod('easeTo', {"easeToOptions" : easeToOptions});
+    return _channel.invokeMethod('easeTo', {"easeToOptions": easeToOptions});
   }
 
+  /// Set the indoor feature state
   Future<void> setIndoorFeatureState(
       {required int id, required Map<String, dynamic> state}) async {
     _channel.invokeMethod('setIndoorFeatureState', {'id': id, 'state': state});
   }
 
+  /// Open an event on the map by its Id. This can only be used for maps which use events.
   Future<void> openEvent(int eventId) async {
     await _channel.invokeMethod('openEvent', {"event": eventId});
   }
 
+  /// Close the current opened event. Go to the search view.
   Future<void> closeEvent() async {
     await _channel.invokeMethod('closeEvent');
   }
 
+  /// Open a list on the map by its Id
   Future<void> openList(int listId) async {
     await _channel.invokeMethod('openList', {"list": listId});
   }
 
+  /// Close the current opened list. Go to the search view.
   Future<void> closeList() async {
     await _channel.invokeMethod('closeList');
   }
 
+  /// Close the current opened popin.
   Future<void> closePopin() async {
     await _channel.invokeMethod('closePopin');
   }
 
+  /// Update search filters
   Future<void> setFilters({required Map<String, dynamic> filters}) async {
     await _channel.invokeMethod('setFilters', {"filters": filters});
   }
 
+  /// Start navigation to a pinpoint. The navigation will start with the user location.
   Future<void> navigateToPinpoint(int pinpointId) async {
     await _channel.invokeMethod('navigateToPinpoint', {"pinpoint": pinpointId});
   }
 
+  /// Stop the currently running navigation.
   Future<void> stopNavigation() async {
     await _channel.invokeMethod('stopNavigation');
   }
 
+  /// Sign in to UFE with wemap JWT token.
   Future<void> signInByToken({required String accessToken}) async {
     await _channel.invokeMethod('signInByToken', {"accessToken": accessToken});
   }
@@ -307,52 +319,64 @@ class LivemapController {
     await _channel.invokeMethod('disableSidebar');
   }
 
+  /// Sign out the current user.
   Future<void> signOut() async {
     await _channel.invokeMethod('signOut');
   }
 
+  ///
   Future<void> setSourceLists({required List<int> sourceLists}) async {
     await _channel.invokeMethod('setSourceLists', {"sourceLists": sourceLists});
   }
 
+  /// Populates the map with given pinpoints.
   Future<void> setPinpoints(
       {required List<Map<String, dynamic>> pinpoints}) async {
     await _channel.invokeMethod('setPinpoints', {"pinpoints": pinpoints});
   }
 
+  /// Populates the map with given events.
   Future<void> setEvents({required List<Map<String, dynamic>> events}) async {
     await _channel.invokeMethod('setEvents', {"events": events});
   }
 
+  /// Center the map on the user's location.
   Future<void> aroundMe() async {
     await _channel.invokeMethod('aroundMe');
   }
 
+  /// Enable analytics tracking
   Future<void> enableAnalytics() async {
     await _channel.invokeMethod('enableAnalytics');
   }
 
+  /// Disable analytics tracking
   Future<void> disableAnalytics() async {
     await _channel.invokeMethod('disableAnalytics');
   }
 
+  /// Draw a polyline.
   Future<void> drawPolyline(
       {required List<Map<String, dynamic>> coordinates}) async {
     await _channel.invokeMethod('drawPolyline', {"coordinates": coordinates});
   }
 
+  /// Remove a polyline by its Id
   Future<void> removePolyline({required String polylineId}) async {
     await _channel.invokeMethod('removePolyline', {"polylineId": polylineId});
   }
 
+  /// Add marker to the map.
   Future<void> addmarker({required Map<String, dynamic> marker}) async {
     await _channel.invokeMethod('addmarker', {"marker": marker});
   }
 
+  /// Remove a previously drawn marker
   Future<void> removeMarker({required String markerId}) async {
     await _channel.invokeMethod('removeMarker', {"markerId": markerId});
   }
 
+  /// Find the nearest pinpoints from a point.
   Future<void> findNearestPinpoints(
       {required Map<String, dynamic> center,
       required FindNearestPinpointsCallback
@@ -367,6 +391,7 @@ class LivemapController {
     }
   }
 
+  /// Return the map's zoom level.
   Future<void> getZoom({required GetZoomCallback getZoomCallback}) async {
     try {
       final double result = await _channel.invokeMethod('getZoom');
@@ -376,9 +401,4 @@ class LivemapController {
       print("Error from native: $e.message");
     }
   }
-
-
-
-
-
 }

@@ -88,4 +88,5 @@ see [example/](example/lib/map_view.dart)
     - `setZoom`
 
 
-![|200](https://user-images.githubusercontent.com/9257198/220157247-e55a1889-9470-4f6a-8afb-f58d94fe565d.png)
+[//]: # (![|200]&#40;https://user-images.githubusercontent.com/9257198/220157247-e55a1889-9470-4f6a-8afb-f58d94fe565d.png&#41;)
+<img src="https://user-images.githubusercontent.com/9257198/220157247-e55a1889-9470-4f6a-8afb-f58d94fe565d.png" width="293" height="635">
