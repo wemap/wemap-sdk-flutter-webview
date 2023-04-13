@@ -1,21 +1,26 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+part of flutter_wemap;
 
-import 'flutter_wemap_sdk_platform_interface.dart';
-import 'livemap_controller.dart';
 
+///@nodoc
 class FlutterWemapSdk {
   Future<String?> getPlatformVersion() {
     return FlutterWemapSdkPlatform.instance.getPlatformVersion();
   }
 }
 
+/// The Livemap widget, to display the map
+///
+/// launch the map using token and emmid on the options attribute.
+/// different events are being listened and provided (as attributes), add your custom callback to the event
 class Livemap extends StatefulWidget {
   final Map<String, dynamic> options;
+  /// When the LiveMap is created, a livemapController is ready to be used, to interact with the map
   final Function(LivemapController)? onMapCreated;
+  /// The callback to be used when the map is ready
   final OnMapReadyCallback? onMapReady;
+  /// The callback to be used when a pinpoint is opened
   final OnPinpointOpenCallback? onPinpointOpen;
+  /// The callback to be used when a pinpoint is closed
   final OnPinpointCloseCallback? onPinpointClose;
   final OnIndoorFeatureClickCallback? onIndoorFeatureClick;
   // final OnFloorChangedCallback? onFloorChanged;
@@ -48,7 +53,7 @@ class Livemap extends StatefulWidget {
   @override
   LivemapState createState() => LivemapState();
 }
-
+///@nodoc
 class LivemapState extends State<Livemap> {
   late LivemapController _mapController;
 

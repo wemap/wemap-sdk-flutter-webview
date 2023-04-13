@@ -316,7 +316,7 @@ class FlutterLivemapViewContainer(context: Context,
 
     private fun setPinpoints(methodCall: MethodCall, result: MethodChannel.Result) {
         val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
-        val pinpoints: List<HashMap<String, Any>> = params.get("setPinpoints") as List<HashMap<String, Any>>
+        val pinpoints: List<HashMap<String, Any>> = params.get("pinpoints") as List<HashMap<String, Any>>
         val pnpts: List<Pinpoint> = pinpoints.map {
             val point: HashMap<String, Double> = it["coordinates"] as HashMap<String, Double>
             val coords = Coordinates(point.get("latitude")!!, point.get("longitude")!!)
