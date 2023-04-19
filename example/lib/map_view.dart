@@ -1,8 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_wemap_sdk/flutter_wemap_sdk.dart';
-import 'package:flutter_wemap_sdk/livemap_controller.dart';
+import 'package:flutter_wemap_sdk/flutter_wemap.dart';
 
 class MapView extends StatelessWidget {
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
@@ -13,7 +12,8 @@ class MapView extends StatelessWidget {
     const snackBar = SnackBar(content: Text('Map is Ready'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
-  void onMapClick(dynamic coordinates){
+
+  void onMapClick(dynamic coordinates) {
     const snackBar = SnackBar(content: Text('Map is clicked'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
     // _mapController.easeTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 15.0, duration: 2000,
@@ -29,16 +29,18 @@ class MapView extends StatelessWidget {
     //   print("pin --> ${pinpoints.toString()}");
     // });
   }
-  void onIndoorFeatureClick(dynamic indoorFeature){
+
+  void onIndoorFeatureClick(dynamic indoorFeature) {
     const snackBar = SnackBar(content: Text('indoor feature is clicked'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
-  void onIndoorLevelChanged(dynamic level){
+
+  void onIndoorLevelChanged(dynamic level) {
     const snackBar = SnackBar(content: Text('indoor level is changed'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
-  void onIndoorLevelsChanged(List<dynamic> levels){
+  void onIndoorLevelsChanged(List<dynamic> levels) {
     const snackBar = SnackBar(content: Text('indoor levels are changed'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
@@ -66,7 +68,7 @@ class MapView extends StatelessWidget {
 
   void onEventUpdated(List<dynamic> events) {
     var snackBar =
-    SnackBar(content: Text('Updated Events count: ${events.length}'));
+        SnackBar(content: Text('Updated Events count: ${events.length}'));
     scaffoldMessengerKey.currentState?.clearSnackBars();
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
@@ -79,7 +81,7 @@ class MapView extends StatelessWidget {
     // whatever with mapController
   }
 
-  void onUserLogin(){
+  void onUserLogin() {
     const snackBar = SnackBar(content: Text('User Logged in'));
 
     scaffoldMessengerKey.currentState?.clearSnackBars();

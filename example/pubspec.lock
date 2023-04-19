@@ -81,7 +81,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.2"
+    version: "0.0.3"
   js:
     dependency: transitive
     description:
@@ -103,7 +103,7 @@ packages:
     description:
       path: maplibre_gl_platform_interface
       ref: main
-      resolved-ref: "7e6b575001b5d9ab5a976cd8753501db415502e2"
+      resolved-ref: d0ad0235cdbdc0fb344c1bd29283e331a3f946fa
       url: "https://github.com/m0nac0/flutter-maplibre-gl.git"
     source: git
     version: "0.16.0"
@@ -143,10 +143,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: dbf0f707c78beedc9200146ad3cb0ab4d5da13c246336987be6940f026500d3a
+      sha256: "6a2128648c854906c53fa8e33986fc0247a1116122f9534dd20e3ab9e16a32bc"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.3"
+    version: "2.1.4"
   sky_engine:
     dependency: transitive
     description: flutter
