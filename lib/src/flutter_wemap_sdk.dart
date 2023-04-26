@@ -30,7 +30,6 @@ class Livemap extends StatefulWidget {
   // final OnContentUpdatedCallback? onContentUpdated;
   final OnPinpointUpdatedCallback? onPinpointUpdated;
   final OnEventUpdatedCallback? onEventUpdated;
-
   final OnUserLoginCallback? onUserLogin;
 
   const Livemap(
@@ -50,6 +49,7 @@ class Livemap extends StatefulWidget {
       this.onEventUpdated,
       this.onUserLogin});
 
+  ///@nodoc
   @override
   LivemapState createState() => LivemapState();
 }
@@ -72,7 +72,6 @@ class LivemapState extends State<Livemap> {
         // onContentUpdated: widget.onContentUpdated,
         onPinpointUpdated: widget.onPinpointUpdated,
         onEventUpdated: widget.onEventUpdated,
-
         onUserLogin: widget.onUserLogin,
       );
     });

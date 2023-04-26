@@ -1,22 +1,6 @@
 part of flutter_wemap;
 
-
-typedef void OnMapReadyCallback();
-typedef OnPinpointOpenCallback = void Function(dynamic pinpoint);
-typedef void OnPinpointCloseCallback();
-typedef void OnContentUpdatedCallback(List<dynamic> pinpoints);
-typedef void OnIndoorFeatureClickCallback(dynamic data);
-typedef void OnIndoorLevelChangedCallback(dynamic data);
-typedef void OnIndoorLevelsChangedCallback(List<dynamic> data);
-typedef void OnMapClickCallback(dynamic coordinates);
-// typedef void OnContentUpdatedCallback(List<dynamic> pinpoints);
-typedef void OnPinpointUpdatedCallback(List<dynamic> pinpoints);
-typedef void OnEventUpdatedCallback(List<dynamic> events);
-typedef void OnUserLoginCallback();
-typedef GetZoomCallback = void Function(dynamic zoomLevel);
-typedef FindNearestPinpointsCallback = void Function(List<dynamic> pinpoints);
-
-/// The controller gives the ability to control and to interact with map
+/// The controller gives the ability to control and to interact with the map
 class LivemapController {
   late MethodChannel _channel;
   final OnMapReadyCallback? onMapReady;
@@ -367,8 +351,8 @@ class LivemapController {
   }
 
   /// Add marker to the map.
-  Future<void> addmarker({required Map<String, dynamic> marker}) async {
-    await _channel.invokeMethod('addmarker', {"marker": marker});
+  Future<void> addMarker({required Map<String, dynamic> marker}) async {
+    await _channel.invokeMethod('addMarker', {"marker": marker});
   }
 
   /// Remove a previously drawn marker

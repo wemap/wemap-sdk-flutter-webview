@@ -8,3 +8,4 @@ import 'src/flutter_wemap_sdk_platform_interface.dart';
 
 part 'src/livemap_controller.dart';
 part 'src/flutter_wemap_sdk.dart';
+part 'src/callback.dart';

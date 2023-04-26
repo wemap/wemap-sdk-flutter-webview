@@ -15,8 +15,8 @@ flutter create sample_flutter_wemap_sdk && cd sample_flutter_wemap_sdk
 ```
 flutter_wemap_sdk:
     git:
-    url: https://github.com/wemap/flutter_wemap_sdk.git
-    ref: master
+      url: https://github.com/wemap/flutter_wemap_sdk.git
+      ref: master
 ```
 
 #### iOS
@@ -67,7 +67,7 @@ class MyHomePage extends StatelessWidget {
 
 - use controller & subscribes to event:
 
-see [example/](example/lib/map_view.dart)
+see [example/](https://github.com/wemap/flutter_wemap_sdk/blob/master/example/lib/map_view.dart)
 
   - events:
     - `onMapReady`
@@ -88,5 +88,4 @@ see [example/](example/lib/map_view.dart)
     - `setZoom`
 
 
-[//]: # (![|200]&#40;https://user-images.githubusercontent.com/9257198/220157247-e55a1889-9470-4f6a-8afb-f58d94fe565d.png&#41;)
-<img src="https://user-images.githubusercontent.com/9257198/220157247-e55a1889-9470-4f6a-8afb-f58d94fe565d.png" width="293" height="635">
+![Example](https://user-images.githubusercontent.com/9257198/220157247-e55a1889-9470-4f6a-8afb-f58d94fe565d.png)
