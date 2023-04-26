@@ -1,10 +1,8 @@
-# flutter_wemap_sdk
+## Getting started
 
 A Flutter plugin to display wemap's livemap.
 
-## Getting Started
-
-#### installation
+## Installation
 
 - Create new flutter application
 ```
@@ -19,7 +17,7 @@ flutter_wemap_sdk:
       ref: master
 ```
 
-#### iOS
+## iOS
 
 - update `Podfile`
 ```
@@ -34,12 +32,12 @@ flutter_wemap_sdk:
 `cd ios/ && pod install`
 
 
-#### android
+## Android
 
 - add `compileSdkVersion 33` to your app's `build.gradle` (`android/app/build.gradle`)
 
 
-#### using
+## Usage
 
 
 - instanciate && return `Livemap` from `emmid` & `token`
