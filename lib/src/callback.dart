@@ -14,3 +14,4 @@ typedef OnEventUpdatedCallback = void Function(List<dynamic> events);
 typedef OnUserLoginCallback = void Function();
 typedef GetZoomCallback = void Function(dynamic zoomLevel);
 typedef FindNearestPinpointsCallback = void Function(List<dynamic> pinpoints);
+typedef DrawPolylineCallback = void Function(String polylineID);

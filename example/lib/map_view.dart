@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_wemap_sdk/flutter_wemap.dart';
 
@@ -9,6 +11,23 @@ class MapView extends StatelessWidget {
   void onNativeMapReady() {
     const snackBar = SnackBar(content: Text('Map is Ready'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+
+    _mapController.centerTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 10);
+    //_mapController.easeTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 15, bearing: 8);
+    String polylineID = "";
+    _mapController.drawPolyline(coordinates: [{"latitude" : 43.123, "longitude" : 17.1245},
+      {"latitude" : 43.123, "longitude" : 18.1245}],polylineOptions: {"color" : "#FF0000", "width" : 12.4}, drawPolylineCallback: (id){
+      polylineID = id;
+    });
+
+    void remove() {
+      _mapController.removePolyline(polylineId: polylineID);
+    }
+    Timer(const Duration(seconds: 10),
+        remove
+    );
+
+
   }
 
   void onMapClick(dynamic coordinates) {
