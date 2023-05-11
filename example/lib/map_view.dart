@@ -12,11 +12,14 @@ class MapView extends StatelessWidget {
     const snackBar = SnackBar(content: Text('Map is Ready'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
 
-    _mapController.centerTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 10);
-    //_mapController.easeTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 15, bearing: 8);
+    //_mapController.centerTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 10);
+    _mapController.easeTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 15, padding: {
+      "bottom" : 2.1, "top" : 2.1, "left" : 2.1, "right" : 2.1
+    },pitch: 12.2);
+
     String polylineID = "";
     _mapController.drawPolyline(coordinates: [{"latitude" : 43.123, "longitude" : 17.1245},
-      {"latitude" : 43.123, "longitude" : 18.1245}],polylineOptions: {"color" : "#FF0000", "width" : 12.4}, drawPolylineCallback: (id){
+      {"latitude" : 43.123, "longitude" : 18.1245}],polylineOptions: {"color" : "#FF0000", "opacity" : 10.2,"width" : 30.4 , "useNetwork" : false}, drawPolylineCallback: (id){
       polylineID = id;
     });
 

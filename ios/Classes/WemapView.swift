@@ -71,7 +71,7 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
 
         wemap.delegate = self
         
-        channel.setMethodCallHandler({ (call: FlutterMethodCall, result: FlutterResult) -> Void in
+        channel.setMethodCallHandler({ (call: FlutterMethodCall, result:@escaping FlutterResult) -> Void in
             switch call.method {
             case "receiveFromFlutter":
                 guard let args = call.arguments as? [String: Any],
@@ -81,7 +81,7 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                 self.receiveFromFlutter(text: text)
                 
                 result("receiveFromFlutter success")
-                
+
             case "openPinpoint":
                 guard let args = call.arguments as? [String: Any],
                     let pinpointId = args["pinpoint"] as? Int else {
@@ -130,18 +130,57 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
   
             case "easeTo":
                 guard let args = call.arguments as? [String: Any],
-                      let center = args["center"] as? [String: Any],
+                      let easeToOptions = args["easeToOptions"] as? [String: Any],
+                      let center = easeToOptions["center"] as? [String: Any],
                       let latitude = center["latitude"] as? Double,
                       let longitude = center["longitude"] as? Double,
-                      let zoom = args["zoom"] as? Double,
-                      let padding = args["padding"] as? [String: Double] else {
+                      let zoom = easeToOptions["zoom"] as? Double,
+                      let padding = easeToOptions["padding"] as? [String: Double] else {
                     return result(FlutterError(code: "-1", message: "Error", details: nil))
                 }
                  self.wemap.easeTo(center: Coordinates(latitude: latitude, longitude: longitude),
                                    zoom: zoom,
                                    padding: padding)
                 return result(nil)
+
+            case "drawPolyline":
+                var coordsList : [Coordinates] = []
+                let polylineOpts : PolylineOptions
+                guard let args = call.arguments as? [String: Any],
+                      let coordinates = args["coordinates"] as? [NSDictionary],
+                      let polylineOptions = args["polylineOptions"] as? NSDictionary
+                      else{
+                        return result(FlutterError(code: "-1", message: "Error", details: nil))
+                      }
+                for coordinate in coordinates {
+                       coordsList.append(Coordinates.fromDictionary(coordinate))
+                  }
+                let opacity = polylineOptions["opacity"] as? Double;
+                let width = polylineOptions["width"] as? Double;
                 
+                let opacityFloat = Float(opacity ?? 0.0)
+                let widthFloat = Float(width ?? 0.0)
+
+                let dictionary: NSDictionary = [
+                    "color" : polylineOptions["color"] as? String,
+                    "width" : widthFloat,
+                    "opacity" : opacityFloat,
+                    "useNetwork" : polylineOptions["useNetwork"] as? Bool
+                ]
+                
+                polylineOpts = PolylineOptions.fromDictionary(dictionary)
+                if #available(iOS 14.0, *) {
+                    self.wemap.drawPolyline(coordinatesList: coordsList,options: polylineOpts, completion: { id in return result(id); })
+                }
+            
+            case "removePolyline":
+                guard let args = call.arguments as? [String: Any],
+                      let polylineId = args["polylineId"] as? String
+                        else{
+                    return result(FlutterError(code: "-1", message: "Error", details: nil))
+                  }
+                self.wemap.removePolyline(id: polylineId)
+
 
             default:
                 result(FlutterMethodNotImplemented)
