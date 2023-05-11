@@ -133,42 +133,60 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                       let easeToOptions = args["easeToOptions"] as? [String: Any],
                       let center = easeToOptions["center"] as? [String: Any],
                       let latitude = center["latitude"] as? Double,
-                      let longitude = center["longitude"] as? Double,
-                      let zoom = easeToOptions["zoom"] as? Double,
-                      let padding = easeToOptions["padding"] as? [String: Double] else {
+                      let longitude = center["longitude"] as? Double
+
+                else {
                     return result(FlutterError(code: "-1", message: "Error", details: nil))
                 }
+                
+                let zoom = easeToOptions["zoom"] as? Double
+                let padding = easeToOptions["padding"] as? [String: Double]
+                let bearing = easeToOptions["bearing"] as? Double
+                let pitch = easeToOptions["pitch"] as? Double
+                let duration = easeToOptions["duration"] as? Double
+                let animate = easeToOptions["animate"] as? Bool
                  self.wemap.easeTo(center: Coordinates(latitude: latitude, longitude: longitude),
-                                   zoom: zoom,
-                                   padding: padding)
-                return result(nil)
+                        zoom: zoom,
+                        padding: padding,
+                        bearing : bearing,
+                        pitch: pitch,
+                        duration: duration,
+                        animate: animate
+                                   )
 
             case "drawPolyline":
                 var coordsList : [Coordinates] = []
-                let polylineOpts : PolylineOptions
+                var polylineOpts : PolylineOptions? = nil
                 guard let args = call.arguments as? [String: Any],
-                      let coordinates = args["coordinates"] as? [NSDictionary],
-                      let polylineOptions = args["polylineOptions"] as? NSDictionary
+                      let coordinates = args["coordinates"] as? [NSDictionary]
                       else{
                         return result(FlutterError(code: "-1", message: "Error", details: nil))
                       }
                 for coordinate in coordinates {
                        coordsList.append(Coordinates.fromDictionary(coordinate))
                   }
-                let opacity = polylineOptions["opacity"] as? Double;
-                let width = polylineOptions["width"] as? Double;
-                
-                let opacityFloat = Float(opacity ?? 0.0)
-                let widthFloat = Float(width ?? 0.0)
+                print("outside")
+                if let polylineOptions = args["polylineOptions"] as? NSDictionary{
+                    var opacityFloat : Float? = nil
+                    var widthFloat : Float? = nil
+                    if let opacity = polylineOptions["opacity"] as? Double{
+                        opacityFloat = Float(opacity)
+                    }
+                    if let width = polylineOptions["width"] as? Double{
+                        widthFloat = Float(width)
+                    }
+                    print("inside")
 
-                let dictionary: NSDictionary = [
-                    "color" : polylineOptions["color"] as? String,
-                    "width" : widthFloat,
-                    "opacity" : opacityFloat,
-                    "useNetwork" : polylineOptions["useNetwork"] as? Bool
-                ]
+                    let dictionary: NSDictionary = [
+                        "color" : polylineOptions["color"] as? String,
+                        "width" : widthFloat,
+                        "opacity" : opacityFloat,
+                        "useNetwork" : polylineOptions["useNetwork"] as? Bool
+                    ]
+                    
+                     polylineOpts = PolylineOptions.fromDictionary(dictionary)
+                }
                 
-                polylineOpts = PolylineOptions.fromDictionary(dictionary)
                 if #available(iOS 14.0, *) {
                     self.wemap.drawPolyline(coordinatesList: coordsList,options: polylineOpts, completion: { id in return result(id); })
                 }

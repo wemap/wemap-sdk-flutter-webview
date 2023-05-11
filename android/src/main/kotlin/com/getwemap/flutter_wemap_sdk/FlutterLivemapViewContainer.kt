@@ -366,22 +366,23 @@ class FlutterLivemapViewContainer(context: Context,
         val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
         val coordinates: List<HashMap<String, Double>> = params.get("coordinates") as List<HashMap<String, Double>>
         val polylineOptions: HashMap<String, Any>? = params["polylineOptions"] as HashMap<String, Any>?
+        val polylineOpts = PolylineOptions()
         val colorString = polylineOptions?.get("color") as String?
-        val color = Color.parseColor(colorString)
+        if (colorString != null) {
+            val color = Color.parseColor(colorString)
+            polylineOpts.color = color
+        }
         val opacity = polylineOptions?.get("opacity") as Double?
         val width = polylineOptions?.get("width") as Double?
         val useNetwork = polylineOptions?.get("useNetwork") as Boolean?
 
+        polylineOpts.opacity = opacity?.toFloat()
+        polylineOpts.width = width?.toFloat()
+        polylineOpts.useNetwork = useNetwork
         val coordsList: List<Coordinates> = coordinates.map {
             val jsonObject = JSONObject(it as Map<*, *>)
             Coordinates.fromJson(jsonObject)
         }
-        val polylineOpts = PolylineOptions()
-        polylineOpts.color = color
-        polylineOpts.opacity = opacity?.toFloat()
-        polylineOpts.width = width?.toFloat()
-        polylineOpts.useNetwork = useNetwork
-
 
         livemap.drawPolyline(coordsList, polylineOpts, DrawPolylineCallback{
             id -> result.success(id)
