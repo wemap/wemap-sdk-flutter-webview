@@ -340,9 +340,16 @@ class LivemapController {
   }
 
   /// Draw a polyline.
-  Future<void> drawPolyline(
-      {required List<Map<String, dynamic>> coordinates}) async {
-    await _channel.invokeMethod('drawPolyline', {"coordinates": coordinates});
+  Future<void> drawPolyline({
+      required List<Map<String, dynamic>> coordinates,
+      Map<String, dynamic>? polylineOptions, DrawPolylineCallback? drawPolylineCallback}) async {
+  try{
+    final String polylineID = await _channel.invokeMethod('drawPolyline', {"coordinates": coordinates, "polylineOptions": polylineOptions});
+    drawPolylineCallback!(polylineID);
+    print("Result from native: $polylineID");
+  } on PlatformException catch (e) {
+    print("Error from native: $e.message");
+  }
   }
 
   /// Remove a polyline by its Id

@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   livemap-ios-sdk:
-    :commit: 98af6b4131badfdb9d75ab1dbe6a8556ea3cbc4c
+    :commit: c6d03dd37c2997400b00b66df532ad9bd7f72917
     :git: "git@github.com:wemap/livemap-ios-sdk.git"
 
 SPEC CHECKSUMS:
@@ -31,4 +31,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: e37f09f74b0e360d702346210376d10635e6e023
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1

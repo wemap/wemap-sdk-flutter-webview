@@ -1,6 +1,7 @@
 package com.getwemap.flutter_wemap_sdk
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.getwemap.livemap.sdk.Livemap
 import com.getwemap.livemap.sdk.LivemapView
+import com.getwemap.livemap.sdk.callback.DrawPolylineCallback
 import com.getwemap.livemap.sdk.callback.FindNearestPinpointsCallback
 import com.getwemap.livemap.sdk.callback.GetZoomCallback
 import com.getwemap.livemap.sdk.callback.LivemapReadyCallback
@@ -17,6 +19,7 @@ import com.getwemap.livemap.sdk.listener.*
 import com.getwemap.livemap.sdk.model.*
 import com.getwemap.livemap.sdk.options.EaseToOptions
 import com.getwemap.livemap.sdk.options.LivemapOptions
+import com.getwemap.livemap.sdk.options.PolylineOptions
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
@@ -362,13 +365,28 @@ class FlutterLivemapViewContainer(context: Context,
     private fun drawPolyline(methodCall: MethodCall, result: MethodChannel.Result) {
         val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
         val coordinates: List<HashMap<String, Double>> = params.get("coordinates") as List<HashMap<String, Double>>
+        val polylineOptions: HashMap<String, Any>? = params["polylineOptions"] as HashMap<String, Any>?
+        val polylineOpts = PolylineOptions()
+        val colorString = polylineOptions?.get("color") as String?
+        if (colorString != null) {
+            val color = Color.parseColor(colorString)
+            polylineOpts.color = color
+        }
+        val opacity = polylineOptions?.get("opacity") as Double?
+        val width = polylineOptions?.get("width") as Double?
+        val useNetwork = polylineOptions?.get("useNetwork") as Boolean?
 
+        polylineOpts.opacity = opacity?.toFloat()
+        polylineOpts.width = width?.toFloat()
+        polylineOpts.useNetwork = useNetwork
         val coordsList: List<Coordinates> = coordinates.map {
             val jsonObject = JSONObject(it as Map<*, *>)
             Coordinates.fromJson(jsonObject)
         }
-        livemap.drawPolyline(coordsList)
-        // result.success(null)
+
+        livemap.drawPolyline(coordsList, polylineOpts, DrawPolylineCallback{
+            id -> result.success(id)
+        })
     }
 
     private fun removePolyline(methodCall: MethodCall, result: MethodChannel.Result) {
