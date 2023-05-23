@@ -95,6 +95,7 @@ class FlutterLivemapViewContainer(context: Context,
         uiThreadHandler.post {
             channel.invokeMethod("onPinpointClose", null)
         }
+
     }
 
     override fun onPinpointsUpdated(p0: Query?, pinpoints: MutableList<Pinpoint>?) {
