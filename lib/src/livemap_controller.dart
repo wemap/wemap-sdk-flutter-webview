@@ -8,7 +8,6 @@ class LivemapController {
   final OnPinpointCloseCallback? onPinpointClose;
   final OnContentUpdatedCallback? onContentUpdated;
   final OnIndoorFeatureClickCallback? onIndoorFeatureClick;
-
   // final OnFloorChangedCallback? onFloorChanged;
   final OnIndoorLevelChangedCallback? onIndoorLevelChanged;
   final OnIndoorLevelsChangedCallback? onIndoorLevelsChanged;
@@ -16,13 +15,13 @@ class LivemapController {
   final OnPinpointUpdatedCallback? onPinpointUpdated;
   final OnEventUpdatedCallback? onEventUpdated;
   final OnUserLoginCallback? onUserLogin;
+  final OnMapMovedCallback? onMapMoved;
 
   final _onMapReadyPlatform = ArgumentCallbacks<void>();
   final _onPinpointOpenPlatform = ArgumentCallbacks<dynamic>();
   final _onPinpointClosePlatform = ArgumentCallbacks<void>();
   final _onContentUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
   final _onIndoorFeatureClickPlatform = ArgumentCallbacks<dynamic>();
-
   // final _onFloorChangedPlatform = ArgumentCallbacks<dynamic>();
   final _onIndoorLevelChangedPlatform = ArgumentCallbacks<dynamic>();
   final _onIndoorLevelsChangedPlatform = ArgumentCallbacks<List<dynamic>>();
@@ -30,6 +29,7 @@ class LivemapController {
   final _onPinpointUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
   final _onEventUpdatedPlatform = ArgumentCallbacks<List<dynamic>>();
   final _onUserLoginPlatform = ArgumentCallbacks<void>();
+  final _onMapMovedPlatform = ArgumentCallbacks<dynamic>();
 
   LivemapController(int id,
       {this.onMapReady,
@@ -44,7 +44,8 @@ class LivemapController {
       // this.onContentUpdated,
       this.onPinpointUpdated,
       this.onEventUpdated,
-      this.onUserLogin}) {
+      this.onUserLogin,
+      this.onMapMoved}) {
     _channel = MethodChannel('MapView/$id');
     _channel.setMethodCallHandler(_handleMethod);
 
@@ -120,6 +121,12 @@ class LivemapController {
         onIndoorLevelsChanged!(data);
       }
     });
+
+    _onMapMovedPlatform.add((dynamic mapMoved) {
+      if (onMapMoved != null) {
+        onMapMoved!(mapMoved);
+      }
+    });
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
@@ -167,6 +174,10 @@ class LivemapController {
         break;
       case 'onUserLogin':
         _onUserLoginPlatform(null);
+        break;
+      case 'onMapMoved':
+        dynamic mapMoved = call.arguments as dynamic;
+        _onMapMovedPlatform(mapMoved);
         break;
     }
   }

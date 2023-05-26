@@ -2,13 +2,10 @@ package com.getwemap.flutter_wemap_sdk
 
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.annotation.NonNull
-import androidx.annotation.RequiresApi
 import com.getwemap.livemap.sdk.Livemap
 import com.getwemap.livemap.sdk.LivemapView
 import com.getwemap.livemap.sdk.callback.DrawPolylineCallback
@@ -22,17 +19,13 @@ import com.getwemap.livemap.sdk.options.LivemapOptions
 import com.getwemap.livemap.sdk.options.PolylineOptions
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
 import com.google.gson.ToNumberPolicy
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.platform.PlatformView
-import org.json.JSONArray
 import org.json.JSONObject
-import java.lang.reflect.TypeVariable
-import java.util.Objects
 
 val gson: Gson = GsonBuilder()
     .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
@@ -52,8 +45,8 @@ class FlutterLivemapViewContainer(context: Context,
     IndoorFeatureClickListener,
     IndoorLevelChangedListener,
     IndoorLevelsChangedListener,
-
-    UserLoginListener
+    UserLoginListener,
+    MapMovedListener
 {
 
     private var view: View
@@ -85,7 +78,7 @@ class FlutterLivemapViewContainer(context: Context,
 
     // livemap handlers
     override fun onPinpointOpen(pinpoint: Pinpoint?) {
-        val pinpointMap = gson.fromJson(pinpoint?.toJson().toString(), HashMap<String, Object>().javaClass)
+        val pinpointMap = gson.fromJson(pinpoint?.toJson().toString(), HashMap<String, Any>().javaClass)
         uiThreadHandler.post {
             channel.invokeMethod("onPinpointOpen", pinpointMap)
         }
@@ -98,14 +91,14 @@ class FlutterLivemapViewContainer(context: Context,
     }
 
     override fun onPinpointsUpdated(p0: Query?, pinpoints: MutableList<Pinpoint>?) {
-        val pps = pinpoints?.map {gson.fromJson(it.toJson().toString(), HashMap<String, Object>().javaClass) }
+        val pps = pinpoints?.map {gson.fromJson(it.toJson().toString(), HashMap<String, Any>().javaClass) }
         uiThreadHandler.post {
             channel.invokeMethod("onPinpointUpdated", pps)
         }
     }
 
     override fun onEventsUpdated(p0: Query?, events: MutableList<Event>?) {
-        val evts = events?.map {gson.fromJson(it.toJson().toString(), HashMap<String, Object>().javaClass) }
+        val evts = events?.map {gson.fromJson(it.toJson().toString(), HashMap<String, Any>().javaClass) }
         uiThreadHandler.post {
             channel.invokeMethod("onEventUpdated", evts)
         }
@@ -121,8 +114,8 @@ class FlutterLivemapViewContainer(context: Context,
          livemap.addIndoorFeatureClickListener(this);
          livemap.addIndoorLevelChangedListener(this);
          livemap.addIndoorLevelsChangedListener(this);
-
          livemap.addUserLoginListener(this);
+         livemap.addMapMovedListener(this);
 
 
          uiThreadHandler.post {
@@ -138,21 +131,21 @@ class FlutterLivemapViewContainer(context: Context,
     }
 
     override fun onIndoorFeatureClick(indoorFeature: IndoorFeature?) {
-            val indoorftrs = gson.fromJson(indoorFeature?.toJson().toString() , HashMap<String, Object>().javaClass)
+            val indoorftrs = gson.fromJson(indoorFeature?.toJson().toString() , HashMap<String, Any>().javaClass)
             uiThreadHandler.post {
                     channel.invokeMethod("onIndoorFeatureClick", indoorftrs)
             }
     }
 
     override fun onIndoorLevelChanged(level: Level?) {
-        val lvl = gson.fromJson(level?.toJson().toString() , HashMap<String, Object>().javaClass)
+        val lvl = gson.fromJson(level?.toJson().toString() , HashMap<String, Any>().javaClass)
         uiThreadHandler.post {
             channel.invokeMethod("onIndoorLevelChanged", lvl)
         }
     }
 
     override fun onIndoorLevelsChanged(levels: Array<out Level>?) {
-        val lvls = levels?.map {gson.fromJson(it.toJson().toString(), HashMap<String, Object>().javaClass) }
+        val lvls = levels?.map {gson.fromJson(it.toJson().toString(), HashMap<String, Any>().javaClass) }
         uiThreadHandler.post {
             channel.invokeMethod("onIndoorLevelsChanged", lvls)
         }
@@ -161,6 +154,31 @@ class FlutterLivemapViewContainer(context: Context,
     override fun onUserLogin() {
         uiThreadHandler.post {
             channel.invokeMethod("onUserLogin", null)
+        }
+    }
+
+    override fun onMapMoved(zoom: Double?, bounds: BoundingBox?, point: Coordinates?) {
+        val result = JSONObject()
+        val northEastJson = JSONObject()
+        val southWestJson = JSONObject()
+        if (bounds != null) {
+            northEastJson.put("latitude", bounds.northEast.lat)
+            northEastJson.put("longitude", bounds.northEast.lng)
+            southWestJson.put("latitude", bounds.southWest.lat)
+            southWestJson.put("longitude", bounds.southWest.lng)
+        }
+        result.put("northEast", northEastJson)
+        result.put("southWest", southWestJson)
+        val bnds = gson.fromJson(result.toString() , HashMap<String, Any>().javaClass)
+        val mapMoved = HashMap<String, Any>()
+        if (point != null) {
+            mapMoved["latitude"] = point.lat
+            mapMoved["longitude"] = point.lng
+        }
+        mapMoved["bounds"] = bnds
+        mapMoved["zoom"] = zoom as Any
+        uiThreadHandler.post {
+            channel.invokeMethod("onMapMoved", mapMoved)
         }
     }
 
@@ -500,6 +518,7 @@ class FlutterLivemapViewContainer(context: Context,
     override fun dispose() {
         channel.setMethodCallHandler(null)
     }
+
 
 
 

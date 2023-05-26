@@ -18,8 +18,10 @@ class MapView extends StatelessWidget {
     },bearing: 12.2);
 
     String polylineID = "";
-    _mapController.drawPolyline(coordinates: [{"latitude" : 43.123, "longitude" : 17.1245},
-      {"latitude" : 43.123, "longitude" : 18.1245}],
+    _mapController.drawPolyline(coordinates: [
+      {"latitude" : 43.123, "longitude" : 17.1245},
+      {"latitude" : 43.123, "longitude" : 18.1245}
+    ],
         polylineOptions: {"color" : "#FF0000", "opacity" : 10.2,"width" : 5.4 , "useNetwork" : false},
         drawPolylineCallback: (id){
       polylineID = id;
@@ -110,6 +112,13 @@ class MapView extends StatelessWidget {
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
+  void onMapMoved(dynamic mapMoved){
+    const snackBar = SnackBar(content: Text('Map Moved'));
+
+    scaffoldMessengerKey.currentState?.clearSnackBars();
+    scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     const Map<String, dynamic> creationParams = <String, dynamic>{
@@ -130,6 +139,7 @@ class MapView extends StatelessWidget {
       onIndoorFeatureClick: onIndoorFeatureClick,
       onIndoorLevelChanged: onIndoorLevelChanged,
       onIndoorLevelsChanged: onIndoorLevelsChanged,
+      onMapMoved: onMapMoved
     );
   }
 }

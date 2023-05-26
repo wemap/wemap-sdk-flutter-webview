@@ -246,6 +246,10 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
         channel.invokeMethod("onIndoorLevelsChanged", arguments: data)
     }
     
+    func sendOnMapMoved(_ mapMoved: MapMoved) {
+        channel.invokeMethod("onMapMoved", arguments: mapMoved.toJSONObject())
+    }
+    
     func receiveFromFlutter(text: String) {}
     
     // subscribe to wemap-sdk events
@@ -282,5 +286,9 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
 
     @objc public func onIndoorLevelsChanged(_ wemapController: wemapsdk, data: [String:Any]) {
         sendOnIndoorLevelsChanged(data)
+    }
+    
+    @objc public func onMapMoved(_ wemapController: wemapsdk, mapMoved: MapMoved) {
+        sendOnMapMoved(mapMoved)
     }
 }
