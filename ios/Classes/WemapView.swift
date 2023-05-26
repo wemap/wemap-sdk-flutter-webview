@@ -198,6 +198,13 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                     return result(FlutterError(code: "-1", message: "Error", details: nil))
                   }
                 self.wemap.removePolyline(id: polylineId)
+                
+            case "getZoom":  
+                if #available(iOS 14.0, *) {
+                    self.wemap.getZoom { zoom in
+                        return result(zoom);
+                    }
+                }
 
 
             default:

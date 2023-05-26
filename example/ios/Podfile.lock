@@ -3,7 +3,7 @@ PODS:
   - flutter_wemap_sdk (0.0.1):
     - Flutter
     - livemap-ios-sdk
-  - livemap-ios-sdk (2.2.3.2)
+  - livemap-ios-sdk (2.5.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -21,13 +21,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   livemap-ios-sdk:
-    :commit: c6d03dd37c2997400b00b66df532ad9bd7f72917
+    :commit: eba743eba38e0dcd45115f5eb240942bb591d051
     :git: "git@github.com:wemap/livemap-ios-sdk.git"
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_wemap_sdk: 39d1302549f8f845d99d08ae95b00a659eb64016
-  livemap-ios-sdk: ecd3a8c770c1d79c0e6e517cb718e78d190ca9d9
+  livemap-ios-sdk: a236ebb9abb618a54292ab8c3e4ed0d149de2a16
 
 PODFILE CHECKSUM: e37f09f74b0e360d702346210376d10635e6e023
 

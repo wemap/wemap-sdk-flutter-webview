@@ -33,8 +33,6 @@ class MapView extends StatelessWidget {
     Timer(const Duration(seconds: 10),
         remove
     );
-
-
   }
 
   void onMapClick(dynamic coordinates) {
@@ -51,6 +49,10 @@ class MapView extends StatelessWidget {
     // _mapController.findNearestPinpoints(center: {"latitude": coordinates["latitude"], "longitude": coordinates["longitude"]} ,
     // findNearestPinpointsCallback: (pinpoints){
     //   print("pin --> ${pinpoints.toString()}");
+    // });
+
+    // _mapController.getZoom(getZoomCallback: (zoom){
+    //   print("zoom level : $zoom");
     // });
   }
 
