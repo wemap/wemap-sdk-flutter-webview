@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.annotation.NonNull
 import com.getwemap.livemap.sdk.Livemap
@@ -15,6 +16,7 @@ import com.getwemap.livemap.sdk.callback.LivemapReadyCallback
 import com.getwemap.livemap.sdk.listener.*
 import com.getwemap.livemap.sdk.model.*
 import com.getwemap.livemap.sdk.options.EaseToOptions
+import com.getwemap.livemap.sdk.options.FitBoundsOptions
 import com.getwemap.livemap.sdk.options.LivemapOptions
 import com.getwemap.livemap.sdk.options.PolylineOptions
 import com.google.gson.Gson
@@ -216,6 +218,7 @@ class FlutterLivemapViewContainer(context: Context,
             "setIndoorFeatureState" -> setIndoorFeatureState(methodCall, result)
             "getZoom" -> getZoom(methodCall, result)
             "setZoom" -> setZoom(methodCall, result)
+            "fitBounds" -> fitBounds(methodCall, result)
 
             else -> result.notImplemented()
         }
@@ -512,6 +515,32 @@ class FlutterLivemapViewContainer(context: Context,
         val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
         val zoomLevel: Float = (params["zoom"] as Double).toFloat()
         livemap.setZoom(zoomLevel)
+    }
+
+    private fun fitBounds(methodCall: MethodCall, result: MethodChannel.Result) {
+        val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
+        val boundingBoxMap: HashMap<String, Any> = params["boundingBox"] as HashMap<String, Any>
+        val boundsJsonObject = JSONObject(boundingBoxMap as Map<*, *>)
+        val boundingBox: BoundingBox = BoundingBox.fromJson(boundsJsonObject)
+        val optionsBoxMap: HashMap<String, Any>? = params["options"] as HashMap<String, Any>?
+        val paddingMap: HashMap<String, Float>? =
+            optionsBoxMap?.get("padding") as HashMap<String, Float>?
+        val padding = Padding()
+        if (paddingMap != null) {
+            if (paddingMap["right"] != null)
+                padding.right = (paddingMap["right"] as Double).toFloat()
+            if (paddingMap["left"] != null)
+                padding.left = (paddingMap["left"] as Double).toFloat()
+            if (paddingMap["top"] != null)
+                padding.top = (paddingMap["top"] as Double).toFloat()
+            if (paddingMap["bottom"] != null)
+                padding.bottom = (paddingMap["bottom"] as Double).toFloat()
+        }
+        val animate = optionsBoxMap?.get("animate") as Boolean?
+        val fitBoundsOptions = FitBoundsOptions()
+        fitBoundsOptions.padding = padding
+        fitBoundsOptions.animate = animate
+        livemap.fitBounds(boundingBox, fitBoundsOptions)
     }
 
 

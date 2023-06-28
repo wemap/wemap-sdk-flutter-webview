@@ -12,27 +12,50 @@ class MapView extends StatelessWidget {
     const snackBar = SnackBar(content: Text('Map is Ready'));
     scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
 
-    //_mapController.centerTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 10);
-    _mapController.easeTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 15, padding: {
-      "bottom" : 2.1, "top" : 2.1, "left" : 2.1, "right" : 2.1
-    },bearing: 12.2);
+    // //_mapController.centerTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 10);
+    // _mapController.easeTo(center: {"latitude" : 43.123, "longitude" : 17.1245}, zoom: 15, padding: {
+    //   "bottom" : 2.1, "top" : 2.1, "left" : 2.1, "right" : 2.1
+    // },bearing: 12.2);
+    //
+    // String polylineID = "";
+    // _mapController.drawPolyline(coordinates: [
+    //   {"latitude" : 43.123, "longitude" : 17.1245},
+    //   {"latitude" : 43.123, "longitude" : 18.1245}
+    // ],
+    //     polylineOptions: {"color" : "#FF0000", "opacity" : 10.2,"width" : 5.4 , "useNetwork" : false},
+    //     drawPolylineCallback: (id){
+    //   polylineID = id;
+    // });
+    //
+    // void remove() {
+    //   _mapController.removePolyline(polylineId: polylineID);
+    // }
+    // Timer(const Duration(seconds: 10),
+    //     remove
+    // );
 
-    String polylineID = "";
-    _mapController.drawPolyline(coordinates: [
-      {"latitude" : 43.123, "longitude" : 17.1245},
-      {"latitude" : 43.123, "longitude" : 18.1245}
-    ],
-        polylineOptions: {"color" : "#FF0000", "opacity" : 10.2,"width" : 5.4 , "useNetwork" : false},
-        drawPolylineCallback: (id){
-      polylineID = id;
-    });
-
-    void remove() {
-      _mapController.removePolyline(polylineId: polylineID);
-    }
-    Timer(const Duration(seconds: 10),
-        remove
-    );
+    // const Map<String, dynamic> bounding = {
+    //   "northEast": {
+    //     "latitude": 12.2,
+    //     "longitude": 12.2
+    //   },
+    //   "southWest": {
+    //     "latitude": 12.2,
+    //     "longitude": 12.2
+    //   }
+    // };
+    // const Map<String, dynamic> options = {
+    //     "padding": {
+    //       "right" : 1.2,
+    //       "top" : 2.1,
+    //       "left" : 1.2,
+    //       "bottom" : 1.3
+    //     },
+    //   "animate": true
+    //   };
+    // Timer(const Duration(seconds: 10),
+    //         _mapController.fitBounds(boundingBox: bounding, options: options) as void Function()
+    //     );
   }
 
   void onMapClick(dynamic coordinates) {
