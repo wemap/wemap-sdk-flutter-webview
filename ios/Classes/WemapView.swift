@@ -205,6 +205,28 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                         return result(zoom);
                     }
                 }
+            
+            case "fitBounds":
+                
+                guard let args = call.arguments as? [String: Any],
+                      let boundingBoxMap = args["boundingBox"] as? NSDictionary
+
+                else {
+                    return result(FlutterError(code: "-1", message: "Error", details: nil))
+                }
+                
+                let boundingBox = BoundingBox.fromDictionary(boundingBoxMap)
+                var options = [
+                    "padding": ["right": 0.0]
+                ]
+                if let optionsMap = args["options"] as? [String: Any]{
+                    options = [
+                    "padding": optionsMap["padding"] as! [String: Double]
+                    ]
+                }
+                    
+                self.wemap.fitBounds(bounds: boundingBox, options:  options)
+                
 
 
             default:

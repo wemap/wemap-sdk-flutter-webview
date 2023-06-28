@@ -357,9 +357,13 @@ class LivemapController {
   try{
     final String polylineID = await _channel.invokeMethod('drawPolyline', {"coordinates": coordinates, "polylineOptions": polylineOptions});
     drawPolylineCallback!(polylineID);
-    print("Result from native: $polylineID");
+    if (kDebugMode) {
+      print("Result from native: $polylineID");
+    }
   } on PlatformException catch (e) {
-    print("Error from native: $e.message");
+    if (kDebugMode) {
+      print("Error from native: $e.message");
+    }
   }
   }
 
@@ -387,9 +391,13 @@ class LivemapController {
       final List<dynamic> result = await _channel
           .invokeMethod('findNearestPinpoints', {"center": center});
       findNearestPinpointsCallback(result);
-      print("Result(findNearestPinpoints) from native: $result");
+      if (kDebugMode) {
+        print("Result(findNearestPinpoints) from native: $result");
+      }
     } on PlatformException catch (e) {
-      print("Error from native: $e.message");
+      if (kDebugMode) {
+        print("Error from native: $e.message");
+      }
     }
   }
 
@@ -398,9 +406,21 @@ class LivemapController {
     try {
       final double result = await _channel.invokeMethod('getZoom');
       getZoomCallback(result);
-      print("Result from native: $result");
+      if (kDebugMode) {
+        print("Result from native: $result");
+      }
     } on PlatformException catch (e) {
-      print("Error from native: $e.message");
+      if (kDebugMode) {
+        print("Error from native: $e.message");
+      }
     }
+  }
+
+  /// Fit map on given bounds and options.
+  Future<void> fitBounds(
+      {required Map<String, dynamic> boundingBox,
+        Map<String, dynamic>? options
+      }) async {
+      await _channel.invokeMethod('fitBounds', {"boundingBox": boundingBox, "options": options});
   }
 }
