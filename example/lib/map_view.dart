@@ -53,6 +53,25 @@ class MapView extends StatelessWidget {
     //     },
     //   "animate": true
     //   };
+    // const Map<String, dynamic> bounding = {
+    //   "southWest": {
+    //     "latitude": 48.968855503285106,
+    //     "longitude": 2.5184824268717643
+    //   },
+    //   "northEast": {
+    //     "latitude": 48.970208377530255,
+    //     "longitude": 2.518835336138232
+    //   }
+    // };
+    // const Map<String, dynamic> options = {
+    //   "padding": {
+    //     "right" : 10.0,
+    //     "top" : 10.0,
+    //     "left" : 10.0,
+    //     "bottom" : 10.0
+    //   },
+    //   "animate": true
+    // };
     // Timer(const Duration(seconds: 10),
     //         _mapController.fitBounds(boundingBox: bounding, options: options) as void Function()
     //     );
@@ -147,8 +166,8 @@ class MapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const Map<String, dynamic> creationParams = <String, dynamic>{
-      "token": "GUHTU6TYAWWQHUSR5Z5JZNMXX",
-      "emmid": 22418
+      "token": "",//"GUHTU6TYAWWQHUSR5Z5JZNMXX",
+      "emmid": 25405
     };
 
     return Livemap(
