@@ -260,7 +260,7 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
     }
     
     func sendOnContentUpdated(_ pinpoints: [WemapPinpoint]) {
-        channel.invokeMethod("onContentUpdated", arguments: pinpoints.map {$0.toJSONObject()})
+        channel.invokeMethod("onPinpointUpdated", arguments: pinpoints.map {$0.toJSONObject()})
     }
     
     func sendOnIndoorFeatureClick(_ data: [String: Any]) {
