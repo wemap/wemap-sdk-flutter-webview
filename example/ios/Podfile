@@ -32,7 +32,7 @@ target 'Runner' do
   use_modular_headers!
 
   pod 'livemap-ios-sdk', :git => 'git@github.com:wemap/livemap-ios-sdk.git', :branch => 'master'
-  platform :ios, '11.0'
+  platform :ios, '12.0'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
