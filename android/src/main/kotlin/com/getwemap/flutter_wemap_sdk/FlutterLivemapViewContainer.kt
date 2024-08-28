@@ -340,11 +340,13 @@ class FlutterLivemapViewContainer(context: Context,
 
     private fun setPinpoints(methodCall: MethodCall, result: MethodChannel.Result) {
         val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
-        val pinpoints: List<HashMap<String, Any>> = params.get("pinpoints") as List<HashMap<String, Any>>
+        val pinpoints: List<HashMap<String, Any>> = params["pinpoints"] as List<HashMap<String, Any>>
         val pnpts: List<Pinpoint> = pinpoints.map {
             val point: HashMap<String, Double> = it["coordinates"] as HashMap<String, Double>
-            val coords = Coordinates(point.get("latitude")!!, point.get("longitude")!!)
-            Pinpoint(it["id"] as Int, it["name"] as String, coords )
+            val coords = Coordinates(point["latitude"]!!, point["longitude"]!!)
+            val tagsList = it["tags"] as List<String>?
+            Pinpoint(it["id"] as Int, it["name"] as String,coords,  it["description"] as String?,
+                it["image_url"] as String?, null, tagsList?.toTypedArray())
         }
         livemap.setPinpoints(pnpts)
         // result.success(null)
@@ -438,7 +440,6 @@ class FlutterLivemapViewContainer(context: Context,
         val params: HashMap<String, Any> = methodCall.arguments as HashMap<String, Any>
         val center: HashMap<String, Double> = params["center"] as HashMap<String, Double>
         val jsonObject = JSONObject(center as Map<*, *>)
-
         livemap.findNearestPinpoints(Coordinates.fromJson(jsonObject), FindNearestPinpointsCallback{pinpoints ->
             val pinList : kotlin.collections.List<HashMap<String, Any?>>  = pinpoints.map {pinpoint ->
                 val pinHashMap = HashMap<String, Any?>()
@@ -450,14 +451,14 @@ class FlutterLivemapViewContainer(context: Context,
                 pinHashMap["coordinates"] = coordinatesMap
                 pinHashMap["address"] = pinpoint.address
                 pinHashMap["description"] = pinpoint.description
-                pinHashMap["imageUrl"] = pinpoint.imageUrl
-                pinHashMap["linkUrl"] = pinpoint.linkUrl
+                pinHashMap["image_url"] = pinpoint.imageUrl
+                pinHashMap["link_url"] = pinpoint.linkUrl
                 pinHashMap["tags"] = pinpoint.tags.asList()
 ////                pinHashMap["externalData"] = pinpoint.externalData
                 pinHashMap["type"] = pinpoint.type
                 pinHashMap["category"] = pinpoint.category
-                pinHashMap["mediaUrl"] = pinpoint.mediaUrl
-                pinHashMap["mediaType"] = pinpoint.mediaType
+                pinHashMap["media_url"] = pinpoint.mediaUrl
+                pinHashMap["media_type"] = pinpoint.mediaType
 ////                pinHashMap["geoEntityShape"] = pinpoint.geoEntityShape
                 pinHashMap
             }

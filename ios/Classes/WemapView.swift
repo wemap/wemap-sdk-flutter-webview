@@ -88,6 +88,33 @@ public class WemapView: NSObject, FlutterPlatformView, wemapsdkViewDelegate {
                         return result(FlutterError(code: "-1", message: "Error", details: nil))
                     }
                 self.wemap.openPinpoint(WemapPinpointId: pinpointId)
+            
+            case "setPinpoints":
+                if let params = call.arguments as? [String: Any],
+                   let pinpoints = params["pinpoints"] as? [[String: Any]] {
+
+                    let pnpts: [WemapPinpoint] = pinpoints.map { pinpoint in
+                        let point = pinpoint["coordinates"] as! [String: Double]
+//                        let coords = Coordinates(latitude: point["latitude"]!, longitude: point["longitude"]!)
+
+                        let tagsList = pinpoint["tags"] as? [String]
+                        let json: NSDictionary = [
+                            "id": pinpoint["id"] as! Int,
+                            "name": pinpoint["name"] as? String ?? "",
+                            "latitude":  point["latitude"]!,
+                            "longitude":  point["longitude"]!,
+                            "description": pinpoint["description"] as? String ?? "",
+                            "image_url": pinpoint["image_url"] as? String,
+//                            "media_url": pinpoint["media_url"] as? String,
+                            "tags": tagsList
+                        ]
+                        return WemapPinpoint(
+                            json
+                        )
+                    }
+                    self.wemap.setPinpoints(WemapPinpoints: pnpts)
+                }
+
 
                 
             case "setZoom":
