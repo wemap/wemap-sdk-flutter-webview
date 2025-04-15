@@ -7,6 +7,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+
   MyApp({super.key});
 
   @override
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scaffoldMessengerKey: _scaffoldKey,
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text("Wemap Sample"),
         ),
